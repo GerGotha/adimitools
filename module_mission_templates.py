@@ -37,344 +37,329 @@ af_castle_lord = af_override_horse | af_override_weapons| af_require_civilian
 
 
 adimi_tool_duel_triggers = (ti_on_agent_killed_or_wounded, 0, 0, [(multiplayer_is_server),(eq, "$g_multiplayer_game_type", multiplayer_game_type_duel),],
-       [
-         (store_trigger_param_1, ":dead_agent_no"), 
-         (store_trigger_param_2, ":killer_agent_no"), 
-		 (try_begin),
-		   (agent_is_human,":dead_agent_no"),
-           (call_script,"script_adimi_tool_duel_refilling",":killer_agent_no"),
-		 (try_end),
-        ])
+[
+	(store_trigger_param_1, ":dead_agent_no"), 
+	(store_trigger_param_2, ":killer_agent_no"), 
+	(try_begin),
+		(agent_is_human,":dead_agent_no"),
+		(call_script,"script_adimi_tool_duel_refilling",":killer_agent_no"),
+	(try_end),
+])
 #02:29 26.07.2013
 adimi_tool_duel_distance_teleport = (1, 0, 0, [(multiplayer_is_server),(eq, "$g_multiplayer_game_type", multiplayer_game_type_duel),],
-       [
-         (try_for_agents,":agent"),
-		   (agent_is_active,":agent"),
-		   (agent_is_human,":agent"),
-		   (agent_is_alive,":agent"),
-		   (agent_get_horse,":horse",":agent"),
-		   (agent_get_slot, ":agent_opponent", ":agent", slot_agent_in_duel_with),
-		   (neg|agent_is_active,":agent_opponent"),
-		   (agent_get_position,pos1,":agent"),
-		   #(agent_get_entry_no,":entry",":agent"),
-		   (try_for_agents,":other_agent"),
-		     (neq,":other_agent",":agent"),
-		     (agent_is_active,":other_agent"),
-		     (agent_is_human,":other_agent"),
-		     (agent_is_alive,":other_agent"),
-             (agent_get_slot, ":opponent", ":other_agent", slot_agent_in_duel_with),
-			 (agent_is_active,":opponent"),
-			 (agent_is_alive,":opponent"),
-			 (neq,":opponent",":agent"),
-			 (agent_get_position,pos2,":other_agent"),
-			 (get_distance_between_positions_in_meters,":dist",pos1,pos2),
-			 (try_begin),
-			   (is_between,":dist",3,5),#3 or 4 meters distance
-			   (neg|agent_is_non_player,":agent"),
-			   (agent_get_player_id,":pid",":agent"),
-			   (multiplayer_send_string_to_player,":pid",multiplayer_event_show_server_message,"str_adimi_tool_warning_teleport_distance"),  
-			 (else_try),
-			   (lt,":dist",3),
-			   (store_random_in_range,":entry",0,65),
-			   (entry_point_get_position,pos3,":entry"),
-			   (try_begin),
-			     (agent_is_active,":horse"),
-				 (agent_is_alive,":horse"),
-				 (assign,":agent",":horse"),
-			   (try_end),
-			   (agent_set_position,":agent",pos3),
-			 (try_end),
-		   (try_end),
-		 (try_end),
-        ])
+[
+	(try_for_agents,":agent"),
+		(agent_is_active,":agent"),
+		(agent_is_human,":agent"),
+		(agent_is_alive,":agent"),
+		(agent_get_horse,":horse",":agent"),
+		(agent_get_slot, ":agent_opponent", ":agent", slot_agent_in_duel_with),
+		(neg|agent_is_active,":agent_opponent"),
+		(agent_get_position,pos1,":agent"),
+		#(agent_get_entry_no,":entry",":agent"),
+		(try_for_agents,":other_agent"),
+			(neq,":other_agent",":agent"),
+			(agent_is_active,":other_agent"),
+			(agent_is_human,":other_agent"),
+			(agent_is_alive,":other_agent"),
+			(agent_get_slot, ":opponent", ":other_agent", slot_agent_in_duel_with),
+			(agent_is_active,":opponent"),
+			(agent_is_alive,":opponent"),
+			(neq,":opponent",":agent"),
+			(agent_get_position,pos2,":other_agent"),
+			(get_distance_between_positions_in_meters,":dist",pos1,pos2),
+			(try_begin),
+				(is_between,":dist",3,5),#3 or 4 meters distance
+				(neg|agent_is_non_player,":agent"),
+				(agent_get_player_id,":pid",":agent"),
+				(multiplayer_send_string_to_player,":pid",multiplayer_event_show_server_message,"str_adimi_tool_warning_teleport_distance"),  
+			(else_try),
+				(lt,":dist",3),
+				(store_random_in_range,":entry",0,65),
+				(entry_point_get_position,pos3,":entry"),
+				(try_begin),
+					(agent_is_active,":horse"),
+					(agent_is_alive,":horse"),
+					(assign,":agent",":horse"),
+				(try_end),
+				(agent_set_position,":agent",pos3),
+			(try_end),
+		(try_end),
+	(try_end),
+])
 
  
 adimi_tool_anti_tk_triggers = (0, 0, ti_once, [(multiplayer_is_server),(eq,"$adimi_tool_anti_tk",1),(neq, "$g_multiplayer_game_type", multiplayer_game_type_duel),(neq, "$g_multiplayer_game_type", multiplayer_game_type_deathmatch),],#Subtracs 1 of each slot
-       [
-	   #before 1.39 00:51 03.11.2013
-         #(try_for_range,":slot",0,1000000),
-         # (troop_slot_ge,adimi_tool_tk_kick_warning_01,":slot",1),
-         # (troop_get_slot,":value",adimi_tool_tk_kick_warning_01,":slot"),
-         # (val_sub,":value",1),
-         # (troop_set_slot,adimi_tool_tk_kick_warning_01,":slot",":value"),
-         #(try_end),
-         #(try_for_range,":slot",0,1000000),
-         # (troop_slot_ge,adimi_tool_tk_kick_warning_02,":slot",1),
-         # (troop_get_slot,":value",adimi_tool_tk_kick_warning_02,":slot"),
-         # (val_sub,":value",1),
-         # (troop_set_slot,adimi_tool_tk_kick_warning_02,":slot",":value"),
-         #(try_end),
-         #(try_for_range,":slot",0,1000000),
-         # (troop_slot_ge,adimi_tool_tk_kick_amount_01,":slot",1),
-         # (troop_get_slot,":value",adimi_tool_tk_kick_amount_01,":slot"),
-          #(val_sub,":value",1),
-        #  (troop_set_slot,adimi_tool_tk_kick_amount_01,":slot",":value"),
-        # (try_end),
-        # (try_for_range,":slot",0,1000000),
-        #  (troop_slot_ge,adimi_tool_tk_kick_amount_02,":slot",1),
-        #  (troop_get_slot,":value",adimi_tool_tk_kick_amount_02,":slot"),
-        #  (val_sub,":value",1),
-        #  (troop_set_slot,adimi_tool_tk_kick_amount_02,":slot",":value"),
-        # (try_end),
-		# (assign,"$adimi_tool_current_round",0),#AdimiTools End Map reset it
-		 
-		 (try_for_range,":slot",0,1000000),#resets tk count complety after mapchange
-          (troop_set_slot,adimi_tool_tk_kick_warning_01,":slot",0),
-          (troop_set_slot,adimi_tool_tk_kick_warning_02,":slot",0),
-          (troop_set_slot,adimi_tool_tk_kick_amount_01,":slot",0),
-          (troop_set_slot,adimi_tool_tk_kick_amount_02,":slot",0),
-         (try_end),
-		 (assign,"$adimi_tool_current_round",0),#AdimiTools End Map reset it
-         ])
+[
+	#before 1.39 00:51 03.11.2013
+	#(try_for_range,":slot",0,1000000),
+	# (troop_slot_ge,adimi_tool_tk_kick_warning_01,":slot",1),
+	# (troop_get_slot,":value",adimi_tool_tk_kick_warning_01,":slot"),
+	# (val_sub,":value",1),
+	# (troop_set_slot,adimi_tool_tk_kick_warning_01,":slot",":value"),
+	#(try_end),
+	#(try_for_range,":slot",0,1000000),
+	# (troop_slot_ge,adimi_tool_tk_kick_warning_02,":slot",1),
+	# (troop_get_slot,":value",adimi_tool_tk_kick_warning_02,":slot"),
+	# (val_sub,":value",1),
+	# (troop_set_slot,adimi_tool_tk_kick_warning_02,":slot",":value"),
+	#(try_end),
+	#(try_for_range,":slot",0,1000000),
+	# (troop_slot_ge,adimi_tool_tk_kick_amount_01,":slot",1),
+	# (troop_get_slot,":value",adimi_tool_tk_kick_amount_01,":slot"),
+	#(val_sub,":value",1),
+	#  (troop_set_slot,adimi_tool_tk_kick_amount_01,":slot",":value"),
+	# (try_end),
+	# (try_for_range,":slot",0,1000000),
+	#  (troop_slot_ge,adimi_tool_tk_kick_amount_02,":slot",1),
+	#  (troop_get_slot,":value",adimi_tool_tk_kick_amount_02,":slot"),
+	#  (val_sub,":value",1),
+	#  (troop_set_slot,adimi_tool_tk_kick_amount_02,":slot",":value"),
+	# (try_end),
+	# (assign,"$adimi_tool_current_round",0),#AdimiTools End Map reset it
+	(try_for_range,":slot",0,1000000),#resets tk count complety after mapchange
+		(troop_set_slot,adimi_tool_tk_kick_warning_01,":slot",0),
+		(troop_set_slot,adimi_tool_tk_kick_warning_02,":slot",0),
+		(troop_set_slot,adimi_tool_tk_kick_amount_01,":slot",0),
+		(troop_set_slot,adimi_tool_tk_kick_amount_02,":slot",0),
+	(try_end),
+	(assign,"$adimi_tool_current_round",0),#AdimiTools End Map reset it
+])
 
 adimi_tool_get_admins_with_admin_level = (ti_on_multiplayer_mission_end, 0, 0, [(multiplayer_is_server),],
-       [
-		 (try_for_players, ":player"), 
-	     #(get_max_players,":max"),
-        # (try_for_range,":player",0,":max"),
-           (player_is_active,":player"),
-		   (player_slot_eq,":player",adimi_tool_admin_level_low,1),
-		   (player_get_unique_id,":game_id",":player"),
-		   (troop_set_slot,"trp_admin_level1",":player",":game_id"),
-         (try_end),
-		 
-		 (try_for_players, ":player"), 
-	     #(get_max_players,":max"),
-        # (try_for_range,":player",0,":max"),
-           (player_is_active,":player"),
-		   (player_slot_eq,":player",adimi_tool_admin_level_mid,1),
-		   (player_get_unique_id,":game_id",":player"),
-		   (troop_set_slot,"trp_admin_level2",":player",":game_id"),
-         (try_end),
-		 
-		 (try_for_players, ":player"), 
-	     #(get_max_players,":max"),
-        # (try_for_range,":player",0,":max"),
-           (player_is_active,":player"),
-		   (player_slot_eq,":player",adimi_tool_admin_level_high,1),
-		   (player_get_unique_id,":game_id",":player"),
-		   (troop_set_slot,"trp_admin_level3",":player",":game_id"),
-         (try_end),
-         ])
+[
+	(try_for_players, ":player"), 
+		(player_is_active,":player"),
+		(player_slot_eq,":player",adimi_tool_admin_level_low,1),
+		(player_get_unique_id,":game_id",":player"),
+		(troop_set_slot,"trp_admin_level1",":player",":game_id"),
+	(try_end),
+		
+	(try_for_players, ":player"), 
+		(player_is_active,":player"),
+		(player_slot_eq,":player",adimi_tool_admin_level_mid,1),
+		(player_get_unique_id,":game_id",":player"),
+		(troop_set_slot,"trp_admin_level2",":player",":game_id"),
+	(try_end),
+
+	(try_for_players, ":player"), 
+		(player_is_active,":player"),
+		(player_slot_eq,":player",adimi_tool_admin_level_high,1),
+		(player_get_unique_id,":game_id",":player"),
+		(troop_set_slot,"trp_admin_level3",":player",":game_id"),
+	(try_end),
+])
 		 
 adimi_tool_reset_admins_with_admin_level = (300, 0, ti_once, [(multiplayer_is_server),],#Reset after 300(5min) sec... could download map
-       [
-         (try_for_range,":slot",0,256),
-		   (troop_set_slot,"trp_admin_level1",":slot",-1),
-		   (troop_set_slot,"trp_admin_level2",":slot",-1),
-		   (troop_set_slot,"trp_admin_level3",":slot",-1),
-         (try_end),
-         ])
+[
+	(try_for_range,":slot",0,256),
+		(troop_set_slot,"trp_admin_level1",":slot",-1),
+		(troop_set_slot,"trp_admin_level2",":slot",-1),
+		(troop_set_slot,"trp_admin_level3",":slot",-1),
+	(try_end),
+])
 		 
 		
 adimi_tool_welcome_message = (3, 0, ti_once, [(multiplayer_is_server),],#Print Map Informations
-       [#s6 = adminnames s2= mapname s3=gamemode
-         (try_begin),
-		   (str_clear, s5),#Clear s5 important
-		   (str_clear, s6),#Clear s6 important
-          # (get_max_players,":max"),
-		   (assign,":admin_amount",0),
-		   (try_for_players, ":p"), 
-          # (try_for_range,":p",0,":max"),#Count admin
-             (player_is_active,":p"),
-	         (this_or_next|player_slot_eq,":p",adimi_tool_admin_level_low,1),
-	         (this_or_next|player_slot_eq,":p",adimi_tool_admin_level_mid,1),
-			 (this_or_next|player_slot_eq,":p",adimi_tool_admin_level_high,1),
-             (player_is_admin, ":p"),#admin...
-			 (val_add,":admin_amount",1),
-			 (str_store_player_username,s5,":p"),#Stores the adminname into s5
-			 (try_begin),
-			   (eq,":admin_amount",1),
-			   (str_store_string,s6,"str_adimi_name_single"),
-			 (else_try),
-			   (gt,":admin_amount",1),
-			   (str_store_string,s6,"str_adimi_name_counter"),
-			 (try_end),
-           (try_end),
-		  (try_begin),
-		   (eq,":admin_amount",0),
-		   (str_store_string,s6,"@/"),
-		  (try_end),
-          (store_current_scene,":cur_scene"),
-          (call_script,"script_game_get_scene_name",":cur_scene"),
-          (str_store_string,s2,"str_s0"),
-          (call_script, "script_game_multiplayer_get_game_type_mission_template", "$g_multiplayer_game_type"),
-          (call_script,"script_game_get_mission_template_name",reg0),
-          (str_store_string,s3,"str_s0"),
-          (str_store_server_name, s4),
-          (str_store_string,s1,"str_adimi_tool_map_informations"),
-          (call_script,"script_adimi_tool_server_message"),
-         (try_end),
-         ])
+[	#s6 = adminnames s2= mapname s3=gamemode
+	(try_begin),
+		(str_clear, s5),#Clear s5 important
+		(str_clear, s6),#Clear s6 important
+		(assign,":admin_amount",0),
+		(try_for_players, ":p"), 
+			(player_is_active,":p"),
+			(this_or_next|player_slot_eq,":p",adimi_tool_admin_level_low,1),
+			(this_or_next|player_slot_eq,":p",adimi_tool_admin_level_mid,1),
+			(this_or_next|player_slot_eq,":p",adimi_tool_admin_level_high,1),
+			(player_is_admin, ":p"),#admin...
+			(val_add,":admin_amount",1),
+			(str_store_player_username,s5,":p"),#Stores the adminname into s5
+			(try_begin),
+				(eq,":admin_amount",1),
+				(str_store_string,s6,"str_adimi_name_single"),
+			(else_try),
+				(gt,":admin_amount",1),
+				(str_store_string,s6,"str_adimi_name_counter"),
+			(try_end),
+		(try_end),
+		(try_begin),
+			(eq,":admin_amount",0),
+			(str_store_string,s6,"@/"),
+		(try_end),
+		(store_current_scene,":cur_scene"),
+		(call_script,"script_game_get_scene_name",":cur_scene"),
+		(str_store_string,s2,"str_s0"),
+		(call_script, "script_game_multiplayer_get_game_type_mission_template", "$g_multiplayer_game_type"),
+		(call_script,"script_game_get_mission_template_name",reg0),
+		(str_store_string,s3,"str_s0"),
+		(str_store_server_name, s4),
+		(str_store_string,s1,"str_adimi_tool_map_informations"),
+		(call_script,"script_adimi_tool_server_message"),
+	(try_end),
+])
 
 
 adimi_tool_teleport_key_pressed = (
   0, 0, 3,
-    [
-	  (neg|multiplayer_is_dedicated_server),
-	    (multiplayer_get_my_player, ":my_player"),
-        (player_is_active,":my_player"),
-		(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
-		(player_is_admin,":my_player"),
-	    (player_get_agent_id, ":my_agent", ":my_player"),
-	    (agent_is_active, ":my_agent"),
-	    (agent_is_alive, ":my_agent"),
-        (key_is_down, key_p),
-        (key_is_down, key_o),
-        (key_is_down, key_right_alt),
-        (agent_get_look_position, pos1, ":my_agent"),
-        (position_move_z, pos1, 120),#to the body
-        (call_script, "script_adimi_tool_custom_teleport_calculation",50),
-        (assign, "$adimi_tool_admin_start_teleport", 1),
-        (particle_system_burst_no_sync, "psys_adimi_tool_tp_symbol", pos1, 1),
-	    (copy_position, pos3, pos1),
-	    (game_key_is_down,gk_defend),#If the admin does block, stop !
-	    (assign, "$adimi_tool_admin_start_teleport", 0),
-    ], [])
+[
+	(neg|multiplayer_is_dedicated_server),
+	(multiplayer_get_my_player, ":my_player"),
+	(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
+	(player_is_active,":my_player"),
+	(player_is_admin,":my_player"),
+	(player_get_agent_id, ":my_agent", ":my_player"),
+	(agent_is_active, ":my_agent"),
+	(agent_is_alive, ":my_agent"),
+	(key_is_down, key_p),
+	(key_is_down, key_o),
+	(key_is_down, key_right_alt),
+	(agent_get_look_position, pos1, ":my_agent"),
+	(position_move_z, pos1, 120),#to the body
+	(call_script, "script_adimi_tool_custom_teleport_calculation",50),
+	(assign, "$adimi_tool_admin_start_teleport", 1),
+	(particle_system_burst_no_sync, "psys_adimi_tool_tp_symbol", pos1, 1),
+	(copy_position, pos3, pos1),
+	(game_key_is_down,gk_defend),#If the admin does block, stop !
+	(assign, "$adimi_tool_admin_start_teleport", 0),
+], [])
 
 adimi_tool_wall_of_death = (
   1, 0, 0,[], 
-	[
+[
+	(try_for_agents,":agent"),
+		(agent_is_active,":agent"),
+		(agent_is_alive,":agent"),
+		(assign,":kill",0),
+		(try_for_prop_instances, ":instance_id", "spr_barrier_8m", somt_object),
+			(eq,":kill",0), #added check to skip unnecessary loops
+			(prop_instance_get_variation_id, ":var1", ":instance_id"),
+			(eq,":var1",1),
+			(scene_prop_has_agent_on_it, ":instance_id", ":agent"),
+			(assign,":kill",1),
+		(try_end),
+		(eq,":kill",1),
+		(agent_is_alive,":agent"),
+		(remove_agent,":agent"),
+	(try_end),
+])
 	
-	#(scene_prop_get_num_instances, ":num_instances_of_scene_prop", "spr_barrier_8m"),     
-     (try_for_agents,":agent"),
-	   (agent_is_active,":agent"),
-	   (agent_is_alive,":agent"),
-	   (assign,":kill",0),
-	   (try_for_prop_instances, ":instance_id", "spr_barrier_8m", somt_object),
-	  # (try_for_range, ":cur_instance", 0, ":num_instances_of_scene_prop"),
-       #  (scene_prop_get_instance, ":instance_id", "spr_barrier_8m", ":cur_instance"),
-         (prop_instance_get_variation_id, ":var1", ":instance_id"),
-	     (eq,":var1",1),
-		 (scene_prop_has_agent_on_it, ":instance_id", ":agent"),
-		 (assign,":kill",1),
-	   (try_end),
-	   (eq,":kill",1),
-	   (agent_is_alive,":agent"),
-	   (remove_agent,":agent"),
-	 (try_end),
-	])
-	
-adimi_tool_teleport_start = (
-  0, 0, 0,
-    [
-	  (neg|multiplayer_is_dedicated_server),
-	  (set_fixed_point_multiplier, 100),
-	  (multiplayer_get_my_player, ":my_player"),
-      (player_is_active,":my_player"),
-	  (this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
-      (player_is_admin,":my_player"),
-	  (player_get_agent_id, ":my_agent", ":my_player"),
-	  (agent_is_active,":my_agent"),
-	  (agent_is_alive, ":my_agent"),
-      (eq, "$adimi_tool_admin_start_teleport", 1),
-      (neg|key_is_down, key_p),
-      (neg|key_is_down, key_o),
-      (neg|key_is_down, key_right_alt),
-      (assign, "$adimi_tool_admin_start_teleport", 0),
-	  (try_begin),
+adimi_tool_teleport_start = (0, 0, 0,
+[
+	(neg|multiplayer_is_dedicated_server),
+	(set_fixed_point_multiplier, 100),
+	(multiplayer_get_my_player, ":my_player"),
+	(player_is_active,":my_player"),
+	(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
+	(player_is_admin,":my_player"),
+	(player_get_agent_id, ":my_agent", ":my_player"),
+	(agent_is_active,":my_agent"),
+	(agent_is_alive, ":my_agent"),
+	(eq, "$adimi_tool_admin_start_teleport", 1),
+	(neg|key_is_down, key_p),
+	(neg|key_is_down, key_o),
+	(neg|key_is_down, key_right_alt),
+	(assign, "$adimi_tool_admin_start_teleport", 0),
+	(try_begin),
 		(position_get_x,":x",pos3),
 		(position_get_y,":y",pos3),
 		(position_get_z,":z",pos3), 
 		(multiplayer_send_4_int_to_server,adimi_tool_server_event,adimi_tool_request_custom_teleport,":x",":y",":z"),
 		(play_sound,"snd_quest_cancelled"),
-	  (try_end),
-    ], [])
+	(try_end),
+], [])
 
          
 adimi_tool_server_message = (1, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_server_messages",1),],#Print Server Messages Informations
-       [#$adimi_tool_message_interval
-        (val_add,"$adimi_tool_message_timer",1),
-        (store_mul,":adimi_tool_interval",60,"$adimi_tool_message_interval"),
-        (try_begin),
-          (ge,"$adimi_tool_message_timer",":adimi_tool_interval"),# time interval = current timer
-            (try_begin),  
-             (eq,"$adimi_tool_message",1), 
-             (str_store_string,s1,"str_custom_server_message_1"),
-            (else_try), 
-             (eq,"$adimi_tool_message",2), 
-             (str_store_string,s1,"str_custom_server_message_2"),
-            (else_try), 
-             (eq,"$adimi_tool_message",3), 
-             (str_store_string,s1,"str_custom_server_message_3"),
-            (else_try), 
-             (eq,"$adimi_tool_message",4), 
-             (str_store_string,s1,"str_custom_server_message_4"),
-            (else_try), 
-             (eq,"$adimi_tool_message",5), 
-             (str_store_string,s1,"str_custom_server_message_5"),    
-             (assign,"$adimi_tool_message",0), 			 
-            (try_end),  
-           #(get_max_players,":max"),
-           # (try_for_range,":player",0,":max"),
-			(try_for_players, ":player"), 
-             (player_is_active,":player"),
-             (multiplayer_send_string_to_player,":player",multiplayer_event_show_server_message,s1),  
-            (try_end),
-            (server_add_message_to_log, s1),    
-            (assign,"$adimi_tool_message_timer",0),   
-            (val_add,"$adimi_tool_message",1),             
-        (try_end),
-         ])
+[#$adimi_tool_message_interval
+	(val_add,"$adimi_tool_message_timer",1),
+	(store_mul,":adimi_tool_interval",60,"$adimi_tool_message_interval"),
+	(try_begin),
+		(ge,"$adimi_tool_message_timer",":adimi_tool_interval"),# time interval = current timer
+		(try_begin),  
+			(eq,"$adimi_tool_message",1), 
+			(str_store_string,s1,"str_custom_server_message_1"),
+		(else_try), 
+			(eq,"$adimi_tool_message",2), 
+			(str_store_string,s1,"str_custom_server_message_2"),
+		(else_try), 
+			(eq,"$adimi_tool_message",3), 
+			(str_store_string,s1,"str_custom_server_message_3"),
+		(else_try), 
+			(eq,"$adimi_tool_message",4), 
+			(str_store_string,s1,"str_custom_server_message_4"),
+		(else_try), 
+			(eq,"$adimi_tool_message",5), 
+			(str_store_string,s1,"str_custom_server_message_5"),    
+			(assign,"$adimi_tool_message",0), 			 
+		(try_end),  
+		(try_for_players, ":player"), 
+			(player_is_active,":player"),
+			(multiplayer_send_string_to_player,":player",multiplayer_event_show_server_message,s1),  
+		(try_end),
+		(server_add_message_to_log, s1),    
+		(assign,"$adimi_tool_message_timer",0),   
+		(val_add,"$adimi_tool_message",1),             
+	(try_end),
+])
 		
 adimi_tool_crash_server_trigger = (1, 0, 0, [(eq,"$adimi_tool_crash_server",1),(multiplayer_is_server),],#Start crashing the server
-       [#$adimi_tool_message_interval
-	    (store_sub,":countdown","$adimi_tool_crash_server_countdown",1),
-		(assign,"$adimi_tool_crash_server_countdown",":countdown"),
-		(assign,reg1,":countdown"),
-		(try_begin),
-		 (eq,":countdown",0),
-		 (str_store_string,s1,"str_adimi_tool_crash_server_countdown_byebye"),
-		 (call_script,"script_adimi_tool_server_message"),
-		(else_try),
-		 (eq,":countdown",2),
-		 (str_store_string,s1,"str_adimi_tool_crash_server_countdown_tosay"),
-		 (call_script,"script_adimi_tool_server_message"),
-		(else_try),
-		 (eq,":countdown",4),
-		 (str_store_string,s1,"str_adimi_tool_crash_server_countdown_time"),
-		 (call_script,"script_adimi_tool_server_message"),
-		(else_try),
-		 (neq,":countdown",-1),
-		 (str_store_string,s1,"str_adimi_tool_crash_server_countdown"),
-		 (call_script,"script_adimi_tool_server_message"),
-        (try_end),
-        (try_begin),
-         (le,":countdown",-1),
-		 (spawn_horse,"itm_warhorse"),
-		 (agent_set_animation, reg0, "anim_cheer"),
-        (try_end),
-         ])
+[#$adimi_tool_message_interval
+	(store_sub,":countdown","$adimi_tool_crash_server_countdown",1),
+	(assign,"$adimi_tool_crash_server_countdown",":countdown"),
+	(assign,reg1,":countdown"),
+	(try_begin),
+		(eq,":countdown",0),
+		(str_store_string,s1,"str_adimi_tool_crash_server_countdown_byebye"),
+		(call_script,"script_adimi_tool_server_message"),
+	(else_try),
+		(eq,":countdown",2),
+		(str_store_string,s1,"str_adimi_tool_crash_server_countdown_tosay"),
+		(call_script,"script_adimi_tool_server_message"),
+	(else_try),
+		(eq,":countdown",4),
+		(str_store_string,s1,"str_adimi_tool_crash_server_countdown_time"),
+		(call_script,"script_adimi_tool_server_message"),
+	(else_try),
+		(neq,":countdown",-1),
+		(str_store_string,s1,"str_adimi_tool_crash_server_countdown"),
+		(call_script,"script_adimi_tool_server_message"),
+	(try_end),
+	(try_begin),
+		(le,":countdown",-1),
+		(spawn_horse,"itm_warhorse"),
+		(agent_set_animation, reg0, "anim_cheer"),
+	(try_end),
+])
 		 
 adimi_tool_pickup_food = (ti_on_item_picked_up, 0, 0, [(multiplayer_is_server),],
-       [
-	    (store_trigger_param_1,":agent_no"),
-	    (store_trigger_param_2,":item"),
-	    (try_begin),
-		  (agent_is_active,":agent_no"),
-		  (agent_is_alive,":agent_no"),
-		  (agent_is_human,":agent_no"),
-		  (neg|agent_is_non_player,":agent_no"),
-		  (this_or_next|eq,":item","itm_horse_meat"),
-		  (this_or_next|eq,":item","itm_raw_date_fruit"),
-		  (this_or_next|eq,":item","itm_smoked_fish"),
-		  (this_or_next|eq,":item","itm_cheese"),
-		  (this_or_next|eq,":item","itm_honey"),
-		  (this_or_next|eq,":item","itm_sausages"),
-		  (this_or_next|eq,":item","itm_cabbages"),
-		  (this_or_next|eq,":item","itm_dried_meat"),
-		  (this_or_next|eq,":item","itm_apples"),
-		  (this_or_next|eq,":item","itm_cattle_meat"),
-		  (this_or_next|eq,":item","itm_bread"),
-		  (this_or_next|eq,":item","itm_chicken"),
-		  (this_or_next|eq,":item","itm_raw_grapes"),
-		  (this_or_next|eq,":item","itm_pork"),
-		  (eq,":item","itm_butter"),
-		  (agent_unequip_item,":agent_no",":item"),
-		  (assign,":addhp",0),
-		  (try_begin),
-		    (eq,"$adimi_tool_hungergames",1),
-		    (store_agent_hit_points,":hp",":agent_no",1),
+[
+	(store_trigger_param_1,":agent_no"),
+	(store_trigger_param_2,":item"),
+	(try_begin),
+		(agent_is_active,":agent_no"),
+		(agent_is_alive,":agent_no"),
+		(agent_is_human,":agent_no"),
+		(neg|agent_is_non_player,":agent_no"),
+		(this_or_next|eq,":item","itm_horse_meat"),
+		(this_or_next|eq,":item","itm_raw_date_fruit"),
+		(this_or_next|eq,":item","itm_smoked_fish"),
+		(this_or_next|eq,":item","itm_cheese"),
+		(this_or_next|eq,":item","itm_honey"),
+		(this_or_next|eq,":item","itm_sausages"),
+		(this_or_next|eq,":item","itm_cabbages"),
+		(this_or_next|eq,":item","itm_dried_meat"),
+		(this_or_next|eq,":item","itm_apples"),
+		(this_or_next|eq,":item","itm_cattle_meat"),
+		(this_or_next|eq,":item","itm_bread"),
+		(this_or_next|eq,":item","itm_chicken"),
+		(this_or_next|eq,":item","itm_raw_grapes"),
+		(this_or_next|eq,":item","itm_pork"),
+		(eq,":item","itm_butter"),
+		(agent_unequip_item,":agent_no",":item"),
+		(assign,":addhp",0),
+		(try_begin),
+			(eq,"$adimi_tool_hungergames",1),
+			(store_agent_hit_points,":hp",":agent_no",1),
 			(try_begin),
 				(eq,":item","itm_horse_meat"),
 				(val_add,":addhp",6),
@@ -424,82 +409,82 @@ adimi_tool_pickup_food = (ti_on_item_picked_up, 0, 0, [(multiplayer_is_server),]
 				(val_min, ":hp", 55),
 				(agent_set_hit_points,":agent_no",":hp",1),
 			(try_end),
-		  (else_try),
-		    (store_agent_hit_points,":hp",":agent_no"),
+		(else_try),
+			(store_agent_hit_points,":hp",":agent_no"),
 		    (val_add,":addhp",5),#Add 5hp if agent eats something
 			(lt,":hp",100),
 			(val_add,":hp",":addhp"),
 		    (val_min, ":hp", 100),
 		    (agent_set_hit_points,":agent_no",":hp"),
-		  (try_end),
-		  (agent_get_player_id,":pid",":agent_no"),
-		  (player_is_active,":pid"),
-		  (str_store_item_name,s1,":item"),
-		  (assign,reg1,":addhp"),
-		  (multiplayer_send_string_to_player,":pid",multiplayer_event_show_server_message,"str_adimi_tool_eat_food"),
+		(try_end),
+		(agent_get_player_id,":pid",":agent_no"),
+		(player_is_active,":pid"),
+		(str_store_item_name,s1,":item"),
+		(assign,reg1,":addhp"),
+		(multiplayer_send_string_to_player,":pid",multiplayer_event_show_server_message,"str_adimi_tool_eat_food"),
 	    (try_end),
-         ])
+])
          
 adimi_tool_spawn_agent_trigger = (ti_on_agent_spawn, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",0),],
-       [
-        (store_trigger_param_1,":agent_no"),
-        (call_script,"script_adimi_tool_check_respawn_agent",":agent_no"),
-        (call_script,"script_adimi_tool_anti_kicking",":agent_no"),
-         ])
+[
+	(store_trigger_param_1,":agent_no"),
+	(call_script,"script_adimi_tool_check_respawn_agent",":agent_no"),
+	(call_script,"script_adimi_tool_anti_kicking",":agent_no"),
+])
 
 adimi_tool_rainfall_rain_trigger = (1, 0, 0, [(multiplayer_is_server),(this_or_next|eq,"$adimi_tool_rainfall_typ",1),(eq,"$adimi_tool_rainfall_typ",3),],
-       [
-        (try_for_agents,":agent_no"),
-		  (agent_is_active,":agent_no"),
-		  (agent_is_alive,":agent_no"),
-		  (agent_is_human,":agent_no"),
-		  (neg|agent_is_non_player,":agent_no"),
-		  (agent_get_position,pos15,":agent_no"),
-	      (position_set_z_to_ground_level, pos15),
-		  (set_fixed_point_multiplier, 100),
-		  (position_move_z, pos15, 180),
-		  (copy_position,pos16,pos15),#Position 16 is the agent head position
-		  (copy_position,pos17,pos15),#Position 17 is the target position
-		  (try_begin),
-		    (eq,"$adimi_tool_rainfall_typ",3),
-		    (copy_position,pos18,pos15),
-		    (copy_position,pos19,pos15),
-		    (copy_position,pos20,pos15),
-		    (copy_position,pos21,pos15),
-		    (position_move_x, pos18, 600),#1.5m
-		    (position_move_x, pos19, -600),#-1.5m
+[
+	(try_for_agents,":agent_no"),
+		(agent_is_active,":agent_no"),
+		(agent_is_alive,":agent_no"),
+		(agent_is_human,":agent_no"),
+		(neg|agent_is_non_player,":agent_no"),
+		(agent_get_position,pos15,":agent_no"),
+		(position_set_z_to_ground_level, pos15),
+		(set_fixed_point_multiplier, 100),
+		(position_move_z, pos15, 180),
+		(copy_position,pos16,pos15),#Position 16 is the agent head position
+		(copy_position,pos17,pos15),#Position 17 is the target position
+		(try_begin),
+			(eq,"$adimi_tool_rainfall_typ",3),
+			(copy_position,pos18,pos15),
+			(copy_position,pos19,pos15),
+			(copy_position,pos20,pos15),
+			(copy_position,pos21,pos15),
+			(position_move_x, pos18, 600),#1.5m
+			(position_move_x, pos19, -600),#-1.5m
 		    (position_move_y, pos20, 600),#1.5m
-		    (position_move_y, pos21, -600),#-1.5m
-		  (try_end),
-		  (position_move_z, pos15, -170),#Reset to ground level
-		  (position_move_z, pos17, 2000),#20meter above the agent is nothing!
-		  #Just one of them must work
-		  (try_begin),
-		    (eq,"$adimi_tool_rainfall_typ",3),
-		    (call_script,"script_rainfall_script_rain"),
-		  (else_try),
-		    (position_has_line_of_sight_to_position, pos16, pos17),#no snow if the agent isn't outside
-			(position_move_z, pos15, 470),#6.5 meter above agent position
-	        (particle_system_burst, "psys_game_rain", pos15, 300),
-		  (try_end),
+			(position_move_y, pos21, -600),#-1.5m
 		(try_end),
-         ])
+		(position_move_z, pos15, -170),#Reset to ground level
+		(position_move_z, pos17, 2000),#20meter above the agent is nothing!
+		#Just one of them must work
+		(try_begin),
+			(eq,"$adimi_tool_rainfall_typ",3),
+			(call_script,"script_rainfall_script_rain"),
+		(else_try),
+			(position_has_line_of_sight_to_position, pos16, pos17),#no snow if the agent isn't outside
+			(position_move_z, pos15, 470),#6.5 meter above agent position
+			(particle_system_burst, "psys_game_rain", pos15, 300),
+		(try_end),
+	(try_end),
+])
 		 
 adimi_tool_rainfall_snow_trigger = (1.5, 0, 0, [(multiplayer_is_server),(this_or_next|eq,"$adimi_tool_rainfall_typ",2),(eq,"$adimi_tool_rainfall_typ",4),],
-       [
-        (try_for_agents,":agent_no"),
-		  (agent_is_active,":agent_no"),
-		  (agent_is_alive,":agent_no"),
-		  (agent_is_human,":agent_no"),
-		  (neg|agent_is_non_player,":agent_no"),
-		  (agent_get_position,pos15,":agent_no"),
-	      (position_set_z_to_ground_level, pos15),
-		  (set_fixed_point_multiplier, 100),
-		  (position_move_z, pos15, 180),
-		  (copy_position,pos16,pos15),#Position 16 is the agent head position
-		  (copy_position,pos17,pos15),#Position 17 is the target position
-		  (try_begin),
-		    (eq,"$adimi_tool_rainfall_typ",4),
+[
+	(try_for_agents,":agent_no"),
+		(agent_is_active,":agent_no"),
+		(agent_is_alive,":agent_no"),
+		(agent_is_human,":agent_no"),
+		(neg|agent_is_non_player,":agent_no"),
+		(agent_get_position,pos15,":agent_no"),
+		(position_set_z_to_ground_level, pos15),
+		(set_fixed_point_multiplier, 100),
+		(position_move_z, pos15, 180),
+		(copy_position,pos16,pos15),#Position 16 is the agent head position
+		(copy_position,pos17,pos15),#Position 17 is the target position
+		(try_begin),
+			(eq,"$adimi_tool_rainfall_typ",4),
 		    (copy_position,pos18,pos15),
 		    (copy_position,pos19,pos15),
 		    (copy_position,pos20,pos15),
@@ -508,558 +493,547 @@ adimi_tool_rainfall_snow_trigger = (1.5, 0, 0, [(multiplayer_is_server),(this_or
 		    (position_move_x, pos19, -400),#-1.5m
 		    (position_move_y, pos20, 400),#1.5m
 		    (position_move_y, pos21, -400),#-1.5m
-		  (try_end),
-		  (position_move_z, pos15, -170),#Reset to ground level
-		  (position_move_z, pos17, 2000),#20meter above the agent is nothing!
-		  #Just one of them must work
-		  (try_begin),
-		    (eq,"$adimi_tool_rainfall_typ",4),
-		    (call_script,"script_rainfall_script_snow"),
-		  (else_try),
-		    (position_has_line_of_sight_to_position, pos16, pos17),#no snow if the agent isn't outside
+		(try_end),
+		(position_move_z, pos15, -170),#Reset to ground level
+		(position_move_z, pos17, 2000),#20meter above the agent is nothing!
+		#Just one of them must work
+		(try_begin),
+			(eq,"$adimi_tool_rainfall_typ",4),
+			(call_script,"script_rainfall_script_snow"),
+		(else_try),
+			(position_has_line_of_sight_to_position, pos16, pos17),#no snow if the agent isn't outside
 			(position_move_z, pos15, 650),#6.5 meter above agent position
 	        (particle_system_burst, "psys_game_snow", pos15, 140),
-		  (try_end),
 		(try_end),
-         ])
+	(try_end),
+])
 		 
 adimi_tool_admin_chats = (0, 0, 0, [(neg|multiplayer_is_dedicated_server),(call_script,"script_cf_presentationcheck"),],
-       [
+[
+	(try_begin),
+		(this_or_next|key_clicked,key_u),
+		(this_or_next|key_clicked,key_i),
+		(key_clicked,key_f7),
+		(multiplayer_get_my_player, ":my_player"),
+		(player_is_active,":my_player"),
+		(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_low,1),
+		(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_mid,1),
+		(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
+		(player_is_admin, ":my_player"),
 		(try_begin),
-			(this_or_next|key_clicked,key_u),
-			(this_or_next|key_clicked,key_i),
+			(key_clicked,key_u),
+			(neg|is_presentation_active, "prsnt_adimi_chat"),
+			(start_presentation,"prsnt_adimi_chat"),
+		(else_try),
+			(key_clicked,key_i),
+			(neg|is_presentation_active, "prsnt_adimi_admin_chat"),
+			(start_presentation,"prsnt_adimi_admin_chat"),
+		(else_try),
 			(key_clicked,key_f7),
-			(multiplayer_get_my_player, ":my_player"),
-			(player_is_active,":my_player"),
-			(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_low,1),
-			(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_mid,1),
-			(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
-			(player_is_admin, ":my_player"),
-			(try_begin),
-				(key_clicked,key_u),
-				(neg|is_presentation_active, "prsnt_adimi_chat"),
-				(start_presentation,"prsnt_adimi_chat"),
-			(else_try),
-				(key_clicked,key_i),
-				(neg|is_presentation_active, "prsnt_adimi_admin_chat"),
-				(start_presentation,"prsnt_adimi_admin_chat"),
-			(else_try),
-				(key_clicked,key_f7),
-				(neg|is_presentation_active, "prsnt_adimi_poll_panel"),
-				(neg|is_presentation_active, "prsnt_multiplayer_poll"),
-				(start_presentation,"prsnt_adimi_poll_panel"),
-			(try_end),
-		(try_end),
-		
-		(try_begin),
-			(key_clicked,key_p),
-			(multiplayer_get_my_player, ":my_player"),
-			(player_is_active,":my_player"),
-			(neg|player_slot_eq,":my_player",adimi_tool_admin_level_low,1),
-			(neg|player_slot_eq,":my_player",adimi_tool_admin_level_mid,1),
-			(neg|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
-			(neg|player_is_admin, ":my_player"),
 			(neg|is_presentation_active, "prsnt_adimi_poll_panel"),
 			(neg|is_presentation_active, "prsnt_multiplayer_poll"),
-			(start_presentation,"prsnt_admin_level_pin"),
+			(start_presentation,"prsnt_adimi_poll_panel"),
 		(try_end),
+	(try_end),
 		
-		(try_begin),
-			(key_is_down,key_left_control),
-			(key_is_down,key_left_alt),
-			(key_clicked,key_f8),
-			(multiplayer_get_my_player, ":my_player"),
-			(multiplayer_get_my_player, ":my_player"),
-			(player_is_active,":my_player"),
-			(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
-			(player_is_admin,":my_player"),
-			(player_get_agent_id,":agent",":my_player"),
-			(agent_is_active,":agent"),
-			(agent_is_alive,":agent"),
-			(multiplayer_send_2_int_to_server, adimi_tool_server_event,adimi_tool_admin_speed_hack,50),
-			(agent_set_speed_modifier,":agent",50),#100 #Walking
-		(try_end),
-		(try_begin),
-			(key_is_down,key_left_control),
-			(key_is_down,key_left_alt),
-			(key_clicked,key_f9),
-			(multiplayer_get_my_player, ":my_player"),
-			(player_is_active,":my_player"),
-			(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
-			(player_is_admin,":my_player"),
-			(player_get_agent_id,":agent",":my_player"),
-			(agent_is_active,":agent"),
-			(agent_is_alive,":agent"),
-			(multiplayer_send_2_int_to_server, adimi_tool_server_event,adimi_tool_admin_speed_hack,100),
-			(agent_set_speed_modifier,":agent",100),#100 #Default
-		(try_end),
-		(try_begin),
-			(key_is_down,key_left_control),
-			(key_is_down,key_left_alt),
-			(key_clicked,key_f10),
-			(multiplayer_get_my_player, ":my_player"),
-			(player_is_active,":my_player"),
-			(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
-			(player_is_admin,":my_player"),
-			(player_get_agent_id,":agent",":my_player"),
-			(agent_is_active,":agent"),
-			(agent_is_alive,":agent"),
-			(multiplayer_send_2_int_to_server, adimi_tool_server_event,adimi_tool_admin_speed_hack,200),
-			(agent_set_speed_modifier,":agent",200),#100  #Something like "sprint"
-		(try_end),
-		(try_begin),
-			(key_is_down,key_left_control),
-			(key_is_down,key_left_alt),
-			(key_clicked,key_f11),
-			(multiplayer_get_my_player, ":my_player"),
-			(player_is_active,":my_player"),
-			(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
-			(player_is_admin,":my_player"),
-			(player_get_agent_id,":agent",":my_player"),
-			(agent_is_active,":agent"),
-			(agent_is_alive,":agent"),
-			(multiplayer_send_2_int_to_server, adimi_tool_server_event,adimi_tool_admin_speed_hack,1000),
-			(agent_set_speed_modifier,":agent",1000),#100 #Mega speed hack
-		(try_end),
+	(try_begin),
+		(key_clicked,key_p),
+		(multiplayer_get_my_player, ":my_player"),
+		(player_is_active,":my_player"),
+		(neg|player_slot_eq,":my_player",adimi_tool_admin_level_low,1),
+		(neg|player_slot_eq,":my_player",adimi_tool_admin_level_mid,1),
+		(neg|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
+		(neg|player_is_admin, ":my_player"),
+		(neg|is_presentation_active, "prsnt_adimi_poll_panel"),
+		(neg|is_presentation_active, "prsnt_multiplayer_poll"),
+		(start_presentation,"prsnt_admin_level_pin"),
+	(try_end),
+		
+	(try_begin),
+		(key_is_down,key_left_control),
+		(key_is_down,key_left_alt),
+		(key_clicked,key_f8),
+		(multiplayer_get_my_player, ":my_player"),
+		(multiplayer_get_my_player, ":my_player"),
+		(player_is_active,":my_player"),
+		(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
+		(player_is_admin,":my_player"),
+		(player_get_agent_id,":agent",":my_player"),
+		(agent_is_active,":agent"),
+		(agent_is_alive,":agent"),
+		(multiplayer_send_2_int_to_server, adimi_tool_server_event,adimi_tool_admin_speed_hack,50),
+		(agent_set_speed_modifier,":agent",50),#100 #Walking
+	(try_end),
+	(try_begin),
+		(key_is_down,key_left_control),
+		(key_is_down,key_left_alt),
+		(key_clicked,key_f9),
+		(multiplayer_get_my_player, ":my_player"),
+		(player_is_active,":my_player"),
+		(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
+		(player_is_admin,":my_player"),
+		(player_get_agent_id,":agent",":my_player"),
+		(agent_is_active,":agent"),
+		(agent_is_alive,":agent"),
+		(multiplayer_send_2_int_to_server, adimi_tool_server_event,adimi_tool_admin_speed_hack,100),
+		(agent_set_speed_modifier,":agent",100),#100 #Default
+	(try_end),
+	(try_begin),
+		(key_is_down,key_left_control),
+		(key_is_down,key_left_alt),
+		(key_clicked,key_f10),
+		(multiplayer_get_my_player, ":my_player"),
+		(player_is_active,":my_player"),
+		(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
+		(player_is_admin,":my_player"),
+		(player_get_agent_id,":agent",":my_player"),
+		(agent_is_active,":agent"),
+		(agent_is_alive,":agent"),
+		(multiplayer_send_2_int_to_server, adimi_tool_server_event,adimi_tool_admin_speed_hack,200),
+		(agent_set_speed_modifier,":agent",200),#100  #Something like "sprint"
+	(try_end),
+	(try_begin),
+		(key_is_down,key_left_control),
+		(key_is_down,key_left_alt),
+		(key_clicked,key_f11),
+		(multiplayer_get_my_player, ":my_player"),
+		(player_is_active,":my_player"),
+		(this_or_next|player_slot_eq,":my_player",adimi_tool_admin_level_high,1),
+		(player_is_admin,":my_player"),
+		(player_get_agent_id,":agent",":my_player"),
+		(agent_is_active,":agent"),
+		(agent_is_alive,":agent"),
+		(multiplayer_send_2_int_to_server, adimi_tool_server_event,adimi_tool_admin_speed_hack,1000),
+		(agent_set_speed_modifier,":agent",1000),#100 #Mega speed hack
+	(try_end),
         
-		])		
+])		
 		
 adimi_tool_player_stats_key = (0, 0, 0, [(neg|multiplayer_is_dedicated_server),],
-       [
-
-		#09.09.2015 For normal players (Admins too)
-		(try_begin),
-			(key_clicked,key_f4),
-			(eq,"$adimi_tool_stats_presentation",0),
-			(neg|is_presentation_active, "prsnt_adimi_player_stats"),
-			(assign,"$adimi_tool_stats_presentation",1),
-			(start_presentation,"prsnt_adimi_player_stats"),			
-		(try_end),
-        
-		])
+[
+	#09.09.2015 For normal players (Admins too)
+	(try_begin),
+		(key_clicked,key_f4),
+		(eq,"$adimi_tool_stats_presentation",0),
+		(neg|is_presentation_active, "prsnt_adimi_player_stats"),
+		(assign,"$adimi_tool_stats_presentation",1),
+		(start_presentation,"prsnt_adimi_player_stats"),			
+	(try_end),
+])
 		 
 adimi_tool_class_limit = (3, 0, 0, [
 (multiplayer_is_server),#(neq, "$g_multiplayer_game_type", multiplayer_game_type_duel),(neq, "$g_multiplayer_game_type", multiplayer_game_type_deathmatch), 23:44 26.07.2013
 ],
-       [
-	    (try_for_players, ":pid",1), 
-	    #(get_max_players,":max"),
-		#(try_for_range,":pid",1,":max"),
-		  (player_is_active,":pid"),
-		  (player_slot_eq,":pid",adimi_tool_player_player_selected_limited_class,1),
-		  (neg|player_is_busy_with_menus,":pid"),
-		 # (player_set_troop_id, ":pid",-1),
-		  (multiplayer_send_message_to_player, ":pid", multiplayer_event_force_start_team_selection),
-		  (multiplayer_send_string_to_player,":pid",multiplayer_event_show_server_message,"str_adimi_tool_option_56"),
-		(try_end),
-         ])
+[
+	(try_for_players, ":pid",1), 
+		(player_is_active,":pid"),
+		(player_slot_eq,":pid",adimi_tool_player_player_selected_limited_class,1),
+		(neg|player_is_busy_with_menus,":pid"),
+		(multiplayer_send_message_to_player, ":pid", multiplayer_event_force_start_team_selection),
+		(multiplayer_send_string_to_player,":pid",multiplayer_event_show_server_message,"str_adimi_tool_option_56"),
+	(try_end),
+])
 		 
 adimi_tool_immortal_loop = (5, 0, 0, [
 (multiplayer_is_server),(eq,"$adimi_tool_immortal_loop",1),
 ],
-       [
-		(try_for_agents,":agent"),
-		  (agent_is_active,":agent"),
-		  (agent_is_alive,":agent"),
-		  (agent_set_no_death_knock_down_only,":agent",1), #0 for disable, 1 for enable
-		(try_end),
-         ])
+[
+	(try_for_agents,":agent"),
+		(agent_is_active,":agent"),
+		(agent_is_alive,":agent"),
+		(agent_set_no_death_knock_down_only,":agent",1), #0 for disable, 1 for enable
+	(try_end),
+])
+
 adimi_tool_mute_loop = (5, 0, 0, [
 (multiplayer_is_server),(eq,"$adimi_tool_mute_loop",1),
 ],
-       [
-	    (try_for_players, ":pid"), 
-	   # (get_max_players,":max"),
-		#(try_for_range,":pid",0,":max"),
-		  (player_is_active,":pid"),
-		  (player_set_is_muted,":pid",1,1),
-		(try_end),
-         ])
+[
+	(try_for_players, ":pid"), 
+		(player_is_active,":pid"),
+		(player_set_is_muted,":pid",1,1),
+	(try_end),
+])
+
 adimi_tool_dev_mode = (0, 0, 0, [(neg|multiplayer_is_dedicated_server),(is_edit_mode_enabled),
-		 ],
-       [
-           (try_begin),
-		   (key_is_down,key_left_control),#ctrl left
-           (key_is_down,key_left_alt),#alt left
-           (key_clicked,key_f5),#f5
-           (try_begin),
-		     (eq,"$gotha_dev_mode",0),
-		     (assign, "$gotha_dev_mode", 1),
-		     (display_message,"@Develope mode activated"),
-		   (else_try),
-		     (assign, "$gotha_dev_mode", 0),
-		     (display_message,"@Develope mode deactivated"),
-           (try_end),
-          (try_end),
+],
+[
+	(try_begin),
+		(key_is_down,key_left_control),#ctrl left
+		(key_is_down,key_left_alt),#alt left
+		(key_clicked,key_f5),#f5
+		(try_begin),
+			(eq,"$gotha_dev_mode",0),
+			(assign, "$gotha_dev_mode", 1),
+			(display_message,"@Develope mode activated"),
+		(else_try),
+			(assign, "$gotha_dev_mode", 0),
+			(display_message,"@Develope mode deactivated"),
+		(try_end),
+	(try_end),
 		  
-		  (try_begin),
-		   (key_is_down,key_left_control),#ctrl left
-           (key_is_down,key_left_alt),#alt left
-           (key_clicked,key_f6),#f5
-           (try_begin),
-		     (eq,"$gotha_dev_mode",1),
-		     (assign, "$gotha_dev_mode", 2),
-		     (display_message,"@Develope mode presentation started"),
-		   (else_try),
-		     (eq,"$gotha_dev_mode",2),
-		     (assign, "$gotha_dev_mode", 1),
-		     (display_message,"@Develope mode presentation deactivated"),
-           (try_end),
-          (try_end),
-		  
-		  (try_begin),
-		    (eq,"$gotha_dev_mode",2),
-		    (neg|is_presentation_active,"prsnt_gotha_dev_infos"),
-		    (start_presentation,"prsnt_gotha_dev_infos"),
-		  (try_end),
-         ])
+	(try_begin),
+		(key_is_down,key_left_control),#ctrl left
+		(key_is_down,key_left_alt),#alt left
+		(key_clicked,key_f6),#f5
+		(try_begin),
+			(eq,"$gotha_dev_mode",1),
+			(assign, "$gotha_dev_mode", 2),
+			(display_message,"@Develope mode presentation started"),
+		(else_try),
+			(eq,"$gotha_dev_mode",2),
+			(assign, "$gotha_dev_mode", 1),
+			(display_message,"@Develope mode presentation deactivated"),
+		(try_end),
+	(try_end),
+	
+	(try_begin),
+		(eq,"$gotha_dev_mode",2),
+		(neg|is_presentation_active,"prsnt_gotha_dev_infos"),
+		(start_presentation,"prsnt_gotha_dev_infos"),
+	(try_end),
+])
 		 
 adimi_tool_exit_trigger = (ti_on_player_exit, 0, 0, [(multiplayer_is_server),],
-       [
-         (store_trigger_param_1,":player"),
-         (call_script,"script_adimi_tool_leave_common",":player"),
-         ])
+[
+	(store_trigger_param_1,":player"),
+	(call_script,"script_adimi_tool_leave_common",":player"),
+])
 
 		 
 adimi_tool_replace_scene_items_after = (ti_after_mission_start, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",0)],
-       [
-         (call_script,"script_adimi_tool_replace_scene_items_with_useable_items_after_ms"),
-         ])
+[
+	(call_script,"script_adimi_tool_replace_scene_items_with_useable_items_after_ms"),
+])
 
 adimi_tool_drowning = (5, 0, 0, [(multiplayer_is_server),(eq, "$adimi_tool_drowning", 1),],
-       [ 
-	     (set_fixed_point_multiplier, 100),
-         (try_for_agents,":agent"),
-		    (agent_is_active, ":agent"),
-            (agent_is_alive,":agent"),
-            (agent_get_position,pos3,":agent"),
-            (position_get_z,":z",pos3),
-			(assign,":deadly_z",-190),
-		 (try_begin),
-		    (lt,":z",":deadly_z"),#min is -190... better for traffic
+[ 
+	(set_fixed_point_multiplier, 100),
+	(try_for_agents,":agent"),
+		(agent_is_active, ":agent"),
+		(agent_is_alive,":agent"),
+		(agent_get_position,pos3,":agent"),
+		(position_get_z,":z",pos3),
+		(assign,":deadly_z",-190),
+		(try_begin),
+			(lt,":z",":deadly_z"),#min is -190... better for traffic
 			(try_begin),
-              (agent_is_active,":agent"),#Check again
-              (agent_is_alive,":agent"),
-              (agent_is_human,":agent"),
-              (agent_get_horse,":horse",":agent"),
-			  (agent_is_active, ":horse"),
-              (agent_is_alive,":horse"),
-			  (assign,":deadly_z",-280),
+				(agent_is_active,":agent"),#Check again
+				(agent_is_alive,":agent"),
+				(agent_is_human,":agent"),
+				(agent_get_horse,":horse",":agent"),
+				(agent_is_active, ":horse"),
+				(agent_is_alive,":horse"),
+				(assign,":deadly_z",-280),
 			(else_try),
-			  (agent_is_active,":agent"),#Check again
-              (agent_is_alive,":agent"),
-              (neg|agent_is_human,":agent"),
-			  (assign,":deadly_z",-200),
+				(agent_is_active,":agent"),#Check again
+				(agent_is_alive,":agent"),
+				(neg|agent_is_human,":agent"),
+				(assign,":deadly_z",-200),
 			(try_end),
 			#####################################################
 			######################SET SOUND######################
 			(assign,":sound","snd_man_grunt"),
 			(try_begin),
-			  (agent_is_active, ":agent"),
-			  (agent_is_human,":agent"),
-			  (try_begin),
-			    (agent_get_troop_id,":trp",":agent"),
-				(troop_get_type,":gender",":trp"),
+				(agent_is_active, ":agent"),
+				(agent_is_human,":agent"),
 				(try_begin),
-				  (agent_get_player_id,":pid",":agent"),
-				  (player_is_active,":pid"),
-				  (player_get_gender, ":gender", ":pid"),
+					(agent_get_troop_id,":trp",":agent"),
+					(troop_get_type,":gender",":trp"),
+					(try_begin),
+						(agent_get_player_id,":pid",":agent"),
+						(player_is_active,":pid"),
+						(player_get_gender, ":gender", ":pid"),
+					(try_end),
+					(try_begin),
+						(eq,":gender",tf_male),#male scream
+						(assign,":sound","snd_man_grunt"),
+					(else_try),
+						(eq,":gender",tf_female),#female scream
+						(assign,":sound","snd_woman_hit"),
+					(try_end),
 				(try_end),
-				(try_begin),
-				 (eq,":gender",tf_male),#male scream
-				 (assign,":sound","snd_man_grunt"),
-				(else_try),
-				 (eq,":gender",tf_female),#female scream
-				 (assign,":sound","snd_woman_hit"),
-				(try_end),
-			  (try_end),
 			(else_try),
-			  (agent_is_active, ":agent"),
-			  (neg|agent_is_human,":agent"),
-			  (assign,":sound","snd_horse_low_whinny"),#Horse scream (xD)
-            (try_end),
-			#####################################################
+				(agent_is_active, ":agent"),
+				(neg|agent_is_human,":agent"),
+				(assign,":sound","snd_horse_low_whinny"),#Horse scream (xD)
+			(try_end),
 			######################SET SOUND END##################	
-			#####################################################
 			####################KILLING SCRIPT###################
-		  (try_begin),
-		    (le,":z",":deadly_z"),
-		    (agent_is_active, ":agent"),
-            (agent_is_alive,":agent"),
-            (agent_is_human,":agent"),
-			(store_agent_hit_points,":agent_hp",":agent"),
-			(store_sub,":damage",":agent_hp",10),
-			(agent_set_hit_points,":agent",":damage"),
 			(try_begin),
-			  (le,":damage",0),
-			  (agent_deliver_damage_to_agent,":agent",":agent"),
+				(le,":z",":deadly_z"),
+				(agent_is_active, ":agent"),
+				(agent_is_alive,":agent"),
+				(agent_is_human,":agent"),
+				(store_agent_hit_points,":agent_hp",":agent"),
+				(store_sub,":damage",":agent_hp",10),
+				(agent_set_hit_points,":agent",":damage"),
+				(try_begin),
+					(le,":damage",0),
+					(agent_deliver_damage_to_agent,":agent",":agent"),
+				(try_end),
+				(multiplayer_send_3_int_to_server, adimi_tool_server_event,adimi_tool_sound,":agent",":sound"),
+				(agent_get_player_id,":pid",":agent"),
+				(player_is_active,":pid"),
+				(multiplayer_send_string_to_player, ":pid", multiplayer_event_show_server_message, "str_adimi_tool_player_is_drowning"),
+			(else_try),
+				(le,":z",":deadly_z"),
+				(agent_is_active, ":agent"),
+				(agent_is_alive,":agent"),
+				(neg|agent_is_human,":agent"),
+				(store_agent_hit_points,":agent_hp",":agent"),
+				(store_sub,":damage",":agent_hp",10),
+				(agent_set_hit_points,":agent",":damage"),
+				(try_begin),
+					(le,":damage",0),
+					(agent_deliver_damage_to_agent,":agent",":agent"),
+				(try_end),
+				(multiplayer_send_3_int_to_server, adimi_tool_server_event,adimi_tool_sound,":agent",":sound"),
 			(try_end),
-			(multiplayer_send_3_int_to_server, adimi_tool_server_event,adimi_tool_sound,":agent",":sound"),
-			(agent_get_player_id,":pid",":agent"),
-			(player_is_active,":pid"),
-			(multiplayer_send_string_to_player, ":pid", multiplayer_event_show_server_message, "str_adimi_tool_player_is_drowning"),
-		  (else_try),
-		    (le,":z",":deadly_z"),
-		    (agent_is_active, ":agent"),
-            (agent_is_alive,":agent"),
-            (neg|agent_is_human,":agent"),
-			(store_agent_hit_points,":agent_hp",":agent"),
-			(store_sub,":damage",":agent_hp",10),
-			(agent_set_hit_points,":agent",":damage"),
-			(try_begin),
-			  (le,":damage",0),
-			  (agent_deliver_damage_to_agent,":agent",":agent"),
-			(try_end),
-			(multiplayer_send_3_int_to_server, adimi_tool_server_event,adimi_tool_sound,":agent",":sound"),
-		  (try_end),
 		(try_end),
-        (try_end),
-        ])	
+	(try_end),
+])	
 		
 adimi_tool_teamhit_log = (ti_on_agent_hit, 0, 0, [(multiplayer_is_server),(neq, "$g_multiplayer_game_type", multiplayer_game_type_duel),(neq, "$g_multiplayer_game_type", multiplayer_game_type_deathmatch),], #Added 18:51 19.07.2014 Logging Teamhits
-       [ 
-	    (store_trigger_param_1, ":agent"),
-		(store_trigger_param_2, ":attacker"),	
-		(store_trigger_param_3, ":dmg"),	
+[ 
+	(store_trigger_param_1, ":agent"),
+	(store_trigger_param_2, ":attacker"),	
+	(store_trigger_param_3, ":dmg"),	
+	(try_begin),
+		(agent_is_active,":agent"),
+		(agent_is_active,":attacker"),
+		(agent_is_alive,":agent"),
+		(agent_is_alive,":attacker"),
 		(try_begin),
+			(agent_is_human,":agent"),
+			(agent_is_human,":attacker"),
+			(agent_get_player_id,":pid",":agent"),
+			(agent_get_player_id,":attacker_pid",":attacker"),
+			(player_is_active,":pid"),
+			(player_is_active,":attacker_pid"),
+			(str_store_player_username,s1,":pid"),
+			(str_store_player_username,s2,":attacker_pid"),
+			(player_get_team_no, ":pid_team", ":pid"),
+			(player_get_team_no, ":pid_attacker_team", ":attacker_pid"),
+			(eq,":pid_team",":pid_attacker_team"),
+			(assign,reg1,":dmg"),
+			(server_add_message_to_log,"str_adimi_tool_teamhit_log"),
+		(else_try),
+			(assign,":horse",":agent"),
+			(neg|agent_is_human,":horse"), #must be a horse
+			(agent_is_human,":attacker"), #attacker must still be human
+			(agent_get_rider,":agent",":horse"),
 			(agent_is_active,":agent"),
-			(agent_is_active,":attacker"),
 			(agent_is_alive,":agent"),
-			(agent_is_alive,":attacker"),
-			(try_begin),
-				(agent_is_human,":agent"),
-				(agent_is_human,":attacker"),
-				(agent_get_player_id,":pid",":agent"),
-				(agent_get_player_id,":attacker_pid",":attacker"),
-				(player_is_active,":pid"),
-				(player_is_active,":attacker_pid"),
-				(str_store_player_username,s1,":pid"),
-				(str_store_player_username,s2,":attacker_pid"),
-				(player_get_team_no, ":pid_team", ":pid"),
-				(player_get_team_no, ":pid_attacker_team", ":attacker_pid"),
-				(eq,":pid_team",":pid_attacker_team"),
-				(assign,reg1,":dmg"),
-				(server_add_message_to_log,"str_adimi_tool_teamhit_log"),
-			(else_try),
-				(assign,":horse",":agent"),
-				(neg|agent_is_human,":horse"), #must be a horse
-				(agent_is_human,":attacker"), #attacker must still be human
-				(agent_get_rider,":agent",":horse"),
-				(agent_is_active,":agent"),
-				(agent_is_alive,":agent"),
-				(agent_get_player_id,":pid",":agent"),
-				(agent_get_player_id,":attacker_pid",":attacker"),
-				(player_is_active,":pid"),
-				(player_is_active,":attacker_pid"),
-				(str_store_player_username,s1,":pid"),
-				(str_store_player_username,s2,":attacker_pid"),
-				(player_get_team_no, ":pid_team", ":pid"),
-				(player_get_team_no, ":pid_attacker_team", ":attacker_pid"),
-				(eq,":pid_team",":pid_attacker_team"),
-				(assign,reg1,":dmg"),
-				(server_add_message_to_log,"str_adimi_tool_teamhit_horse_log"),
-			(try_end),
+			(agent_get_player_id,":pid",":agent"),
+			(agent_get_player_id,":attacker_pid",":attacker"),
+			(player_is_active,":pid"),
+			(player_is_active,":attacker_pid"),
+			(str_store_player_username,s1,":pid"),
+			(str_store_player_username,s2,":attacker_pid"),
+			(player_get_team_no, ":pid_team", ":pid"),
+			(player_get_team_no, ":pid_attacker_team", ":attacker_pid"),
+			(eq,":pid_team",":pid_attacker_team"),
+			(assign,reg1,":dmg"),
+			(server_add_message_to_log,"str_adimi_tool_teamhit_horse_log"),
 		(try_end),
-        ])		
+	(try_end),
+])		
 		
-adimi_tool_reopen_presentations = (ti_battle_window_opened, 0, 0, [], [
-		(try_begin),
-			(eq,"$adimi_tool_stats_presentation",1),
-			(neg|is_presentation_active, "prsnt_adimi_player_stats"), 
-			#(multiplayer_get_my_player,":p"),
-			#(player_is_active,":p"),
-			#(player_get_team_no, ":team",":p"),
-			#(this_or_next|eq,":team",0),
-			#(eq,":team",1),
-			(start_presentation,"prsnt_adimi_player_stats"),
-		(try_end),
-		])
+adimi_tool_reopen_presentations = (ti_battle_window_opened, 0, 0, [], 
+[
+	(try_begin),
+		(eq,"$adimi_tool_stats_presentation",1),
+		(neg|is_presentation_active, "prsnt_adimi_player_stats"), 
+		(start_presentation,"prsnt_adimi_player_stats"),
+	(try_end),
+])
 		
 adimi_tool_fade_out_stay_horses = [
-      (10, 0, 0, [
-	  (multiplayer_is_server),
-	  (eq, "$adimi_tool_horses_fade_out", 1),
-	  ],
-       [ 
-        (try_for_agents,":horse"),
-		    (agent_is_active, ":horse"),
-            (agent_is_alive,":horse"),
-            (neg|agent_is_human,":horse"),
+	(10, 0, 0, [
+		(multiplayer_is_server),
+		(eq, "$adimi_tool_horses_fade_out", 1),
+	],
+	[ 
+		(try_for_agents,":horse"),
+			(agent_is_active, ":horse"),
+			(agent_is_alive,":horse"),
+			(neg|agent_is_human,":horse"),
 			(agent_get_rider,":rider",":horse"),
 			(neg|agent_is_active,":rider"),
 			(store_mission_timer_a,":time"),
 			(try_begin),
-			  (neg|agent_slot_ge,":horse",adimi_tool_stray_horse,1),#means lt 1 = 0 or a negativ number
-			  (agent_set_slot,":horse",adimi_tool_stray_horse,":time"),
+				(neg|agent_slot_ge,":horse",adimi_tool_stray_horse,1),#means lt 1 = 0 or a negativ number
+				(agent_set_slot,":horse",adimi_tool_stray_horse,":time"),
 			(else_try),
-			  (agent_slot_ge,":horse",adimi_tool_stray_horse,1),
-			  (agent_get_slot,":old_time",":horse",adimi_tool_stray_horse),
-			  (store_add,":old_time_with_fo_addition",":old_time","$adimi_tool_horses_fade_out_in_sec"),
-			  (ge,":time",":old_time_with_fo_addition"),
-			  (agent_fade_out,":horse"),
+				(agent_slot_ge,":horse",adimi_tool_stray_horse,1),
+				(agent_get_slot,":old_time",":horse",adimi_tool_stray_horse),
+				(store_add,":old_time_with_fo_addition",":old_time","$adimi_tool_horses_fade_out_in_sec"),
+				(ge,":time",":old_time_with_fo_addition"),
+				(agent_fade_out,":horse"),
 			(try_end),
 		(try_end),
-        ]),
+	]),
 		
-		(ti_on_agent_mount, 0, 0, [
+	(ti_on_agent_mount, 0, 0, [
 		(multiplayer_is_server),
 		(eq, "$adimi_tool_horses_fade_out", 1),
-		],
-       [ 
-	   # Trigger Param 1: agent id
-       # Trigger Param 2: horse agent id
-	   (store_trigger_param_2,":horse"),
-	    (try_begin),
-	      (agent_is_active, ":horse"),
-          (agent_is_alive,":horse"),
-          (neg|agent_is_human,":horse"),
-		  (agent_set_slot,":horse",adimi_tool_stray_horse,0),
-	    (try_end),
-        ]),
-		]	 
+	],
+	[ 
+		# Trigger Param 1: agent id
+		# Trigger Param 2: horse agent id
+		(store_trigger_param_2,":horse"),
+		(try_begin),
+			(agent_is_active, ":horse"),
+			(agent_is_alive,":horse"),
+			(neg|agent_is_human,":horse"),
+			(agent_set_slot,":horse",adimi_tool_stray_horse,0),
+		(try_end),
+	]),
+]	 
 		
 adimi_tool_hungergames_trigger = [
-      		 #HungerGamestarts#
-		(1, 0, 0, [(eq,"$adimi_tool_hungergames",1)],
-       [
-         (multiplayer_is_server),
-         #checking for restarting the map
-         (assign, ":end_map", 0),
-         (try_begin),
-           (store_mission_timer_a, ":mission_timer"),
-           (store_mul, ":game_max_seconds", "$g_multiplayer_game_max_minutes", 60),
-           (gt, ":mission_timer", ":game_max_seconds"),
-           (assign, ":end_map", 1),
-         (try_end),
-         (try_begin),
-           (eq, ":end_map", 1),
-		   (eq,"$adimi_tool_hungergames_game_is_active",0),#avoid map change during a active hungergame round...so it will change directly after end
-           (call_script, "script_game_multiplayer_get_game_type_mission_template", "$g_multiplayer_game_type"),
-           (start_multiplayer_mission, reg0, "$g_multiplayer_selected_map", 0),
-           (call_script, "script_game_set_multiplayer_mission_end"),
-         (try_end),
-         ]),
+	#HungerGamestarts#
+	(1, 0, 0, [(eq,"$adimi_tool_hungergames",1)],
+	[
+		(multiplayer_is_server),
+		#checking for restarting the map
+		(assign, ":end_map", 0),
+		(try_begin),
+			(store_mission_timer_a, ":mission_timer"),
+			(store_mul, ":game_max_seconds", "$g_multiplayer_game_max_minutes", 60),
+			(gt, ":mission_timer", ":game_max_seconds"),
+			(assign, ":end_map", 1),
+		(try_end),
+		(try_begin),
+			(eq, ":end_map", 1),
+			(eq,"$adimi_tool_hungergames_game_is_active",0),#avoid map change during a active hungergame round...so it will change directly after end
+			(call_script, "script_game_multiplayer_get_game_type_mission_template", "$g_multiplayer_game_type"),
+			(start_multiplayer_mission, reg0, "$g_multiplayer_selected_map", 0),
+			(call_script, "script_game_set_multiplayer_mission_end"),
+		(try_end),
+	]),
 		 
-		(ti_on_agent_spawn, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1)],
-       [
-         (store_trigger_param_1, ":agent_no"),
-         (agent_is_active,":agent_no"),
-         (agent_is_alive,":agent_no"),
-		 (neg|agent_is_non_player,":agent_no"),
-		 (agent_set_max_hit_points,":agent_no",55,1),
-		 (agent_set_hit_points,":agent_no",55,1),
-		 (try_for_agents,":other_agents"),
-		   (agent_is_active,":other_agents"),
-           (agent_is_alive,":other_agents"),
-		   (neg|agent_is_non_player,":other_agents"),
-		   (agent_add_relation_with_agent,":agent_no", ":other_agents",1),##Ally them
-		   (agent_add_relation_with_agent,":other_agents", ":agent_no",1),##Ally them
-		 (try_end),
-		 (call_script,"script_adimi_tool_check_respawn_agent",":agent_no"),
-         (call_script,"script_adimi_tool_anti_kicking",":agent_no"),
-		 (call_script,"script_adimi_tool_check_respawn_hungergames_start",":agent_no"),
-         ]),
+	(ti_on_agent_spawn, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1)],
+	[
+		(store_trigger_param_1, ":agent_no"),
+		(agent_is_active,":agent_no"),
+		(agent_is_alive,":agent_no"),
+		(neg|agent_is_non_player,":agent_no"),
+		(agent_set_max_hit_points,":agent_no",55,1),
+		(agent_set_hit_points,":agent_no",55,1),
+		(try_for_agents,":other_agents"),
+			(agent_is_active,":other_agents"),
+			(agent_is_alive,":other_agents"),
+			(neg|agent_is_non_player,":other_agents"),
+			(agent_add_relation_with_agent,":agent_no", ":other_agents",1),##Ally them
+			(agent_add_relation_with_agent,":other_agents", ":agent_no",1),##Ally them
+		(try_end),
+		(call_script,"script_adimi_tool_check_respawn_agent",":agent_no"),
+		(call_script,"script_adimi_tool_anti_kicking",":agent_no"),
+		(call_script,"script_adimi_tool_check_respawn_hungergames_start",":agent_no"),
+	]),
 
-      (ti_server_player_joined, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1)],
-       [
-         (store_trigger_param_1, ":player_no"),
-         (call_script, "script_multiplayer_server_player_joined_common", ":player_no"),
-         ]),
+	(ti_server_player_joined, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1)],
+	[
+		(store_trigger_param_1, ":player_no"),
+		(call_script, "script_multiplayer_server_player_joined_common", ":player_no"),
+	]),
 
-      (ti_before_mission_start, 0, 0, [(eq,"$adimi_tool_hungergames",1)],
-       [
-         (assign, "$g_multiplayer_game_type", multiplayer_game_type_deathmatch),
-         (call_script, "script_multiplayer_server_before_mission_start_common"),
+	(ti_before_mission_start, 0, 0, [(eq,"$adimi_tool_hungergames",1)],
+	[
+		(assign, "$g_multiplayer_game_type", multiplayer_game_type_deathmatch),
+		(call_script, "script_multiplayer_server_before_mission_start_common"),
          
-         (multiplayer_make_everyone_enemy),
+		(multiplayer_make_everyone_enemy),
 
-         (call_script, "script_multiplayer_init_mission_variables"),
-         (call_script, "script_multiplayer_remove_destroy_mod_targets"),
-         (call_script, "script_multiplayer_remove_headquarters_flags"), # close this line and open map in deathmatch mod and use all ladders firstly 
-         ]),                                                            # to be able to edit maps without damaging any headquarters flags ext. 
+		(call_script, "script_multiplayer_init_mission_variables"),
+		(call_script, "script_multiplayer_remove_destroy_mod_targets"),
+		(call_script, "script_multiplayer_remove_headquarters_flags"), # close this line and open map in deathmatch mod and use all ladders firstly 
+	]),                                                            # to be able to edit maps without damaging any headquarters flags ext. 
 
-      (ti_after_mission_start, 0, 0, [(eq,"$adimi_tool_hungergames",1)], 
-       [
-         (set_spawn_effector_scene_prop_kind, 0, -1), #during this mission, agents of "team 0" will try to spawn around scene props with kind equal to -1(no effector for this mod)
-         (set_spawn_effector_scene_prop_kind, 1, -1), #during this mission, agents of "team 1" will try to spawn around scene props with kind equal to -1(no effector for this mod)
+	(ti_after_mission_start, 0, 0, [(eq,"$adimi_tool_hungergames",1)], 
+	[
+		(set_spawn_effector_scene_prop_kind, 0, -1), #during this mission, agents of "team 0" will try to spawn around scene props with kind equal to -1(no effector for this mod)
+		(set_spawn_effector_scene_prop_kind, 1, -1), #during this mission, agents of "team 1" will try to spawn around scene props with kind equal to -1(no effector for this mod)
 
-         (call_script, "script_initialize_all_scene_prop_slots"),
+		(call_script, "script_initialize_all_scene_prop_slots"),
          
-         (call_script, "script_multiplayer_move_moveable_objects_initial_positions"),
-        # (call_script, "script_adimi_tool_replace_scene_items_with_useable_items_after_ms_hungergame"), 
-         (call_script, "script_adimi_tool_move_scene_items_away_after_ms_hungergame"), 
-         (call_script, "script_adimi_tool_hungergames_set_possible_players"),#Counts the possible players... (spr_tree_a)
+		(call_script, "script_multiplayer_move_moveable_objects_initial_positions"),
+        #(call_script, "script_adimi_tool_replace_scene_items_with_useable_items_after_ms_hungergame"), 
+		(call_script, "script_adimi_tool_move_scene_items_away_after_ms_hungergame"), 
+		(call_script, "script_adimi_tool_hungergames_set_possible_players"),#Counts the possible players... (spr_tree_a)
 
-		 (assign,"$adimi_tool_hungergames_game_is_active",0),#Is in a round
-		 (assign, "$g_multiplayer_ready_for_spawning_agent", 1),
-         ]),
+		(assign,"$adimi_tool_hungergames_game_is_active",0),#Is in a round
+		(assign, "$g_multiplayer_ready_for_spawning_agent", 1),
+	]),
 
-      (ti_on_multiplayer_mission_end, 0, 0, [(eq,"$adimi_tool_hungergames",1)],
-       [
-         #ELITE_WARRIOR achievement
-         (try_begin),
-           (multiplayer_get_my_player, ":my_player_no"),
-           (is_between, ":my_player_no", 0, multiplayer_max_possible_player_id),
-           (player_get_team_no, ":my_player_team", ":my_player_no"),
-           (lt, ":my_player_team", multi_team_spectator),
-           (player_get_kill_count, ":kill_count", ":my_player_no"),
-           (player_get_death_count, ":death_count", ":my_player_no"),
-           (store_mul, ":my_score_plus_death", ":kill_count", 1000),
-           (val_sub, ":my_score_plus_death", ":death_count"),
-           (assign, ":continue", 1),
-           (get_max_players, ":num_players"),
-           (assign, ":end_cond", ":num_players"),
-           (try_for_range, ":player_no", 0, ":end_cond"),
-             (player_is_active, ":player_no"),
-             (player_get_team_no, ":player_team", ":player_no"),
-             (this_or_next|eq, ":player_team", 0),
-             (eq, ":player_team", 1),
-             (player_get_kill_count, ":kill_count", ":player_no"),
-             (player_get_death_count, ":death_count", ":player_no"), #get_death_count
-             (store_mul, ":player_score_plus_death", ":kill_count", 1000),
-             (val_sub, ":player_score_plus_death", ":death_count"),
-             (gt, ":player_score_plus_death", ":my_score_plus_death"),
-             (assign, ":continue", 0),
-             (assign, ":end_cond", 0), #break
-           (try_end),
-           (eq, ":continue", 1),
-           (unlock_achievement, ACHIEVEMENT_ELITE_WARRIOR),
-         (try_end),
-         #ELITE_WARRIOR achievement end
+	(ti_on_multiplayer_mission_end, 0, 0, [(eq,"$adimi_tool_hungergames",1)],
+	[
+		#ELITE_WARRIOR achievement
+		(try_begin),
+			(multiplayer_get_my_player, ":my_player_no"),
+			(is_between, ":my_player_no", 0, multiplayer_max_possible_player_id),
+			(player_get_team_no, ":my_player_team", ":my_player_no"),
+			(lt, ":my_player_team", multi_team_spectator),
+			(player_get_kill_count, ":kill_count", ":my_player_no"),
+			(player_get_death_count, ":death_count", ":my_player_no"),
+			(store_mul, ":my_score_plus_death", ":kill_count", 1000),
+			(val_sub, ":my_score_plus_death", ":death_count"),
+			(assign, ":continue", 1),
+			(get_max_players, ":num_players"),
+			(assign, ":end_cond", ":num_players"),
+			(try_for_range, ":player_no", 0, ":end_cond"),
+				(player_is_active, ":player_no"),
+				(player_get_team_no, ":player_team", ":player_no"),
+				(this_or_next|eq, ":player_team", 0),
+				(eq, ":player_team", 1),
+				(player_get_kill_count, ":kill_count", ":player_no"),
+				(player_get_death_count, ":death_count", ":player_no"), #get_death_count
+				(store_mul, ":player_score_plus_death", ":kill_count", 1000),
+				(val_sub, ":player_score_plus_death", ":death_count"),
+				(gt, ":player_score_plus_death", ":my_score_plus_death"),
+				(assign, ":continue", 0),
+				(assign, ":end_cond", 0), #break
+			(try_end),
+			(eq, ":continue", 1),
+			(unlock_achievement, ACHIEVEMENT_ELITE_WARRIOR),
+		(try_end),
+		#ELITE_WARRIOR achievement end
 
-         (call_script, "script_multiplayer_event_mission_end"),
+		(call_script, "script_multiplayer_event_mission_end"),
 
-         (assign, "$g_multiplayer_stats_chart_opened_manually", 0),
-         (start_presentation, "prsnt_multiplayer_stats_chart_deathmatch"),
+		(assign, "$g_multiplayer_stats_chart_opened_manually", 0),
+		(start_presentation, "prsnt_multiplayer_stats_chart_deathmatch"),
 
-	     (assign,"$adimi_tool_hungergames_game_is_active",0),#
-	     (assign,"$adimi_tool_hungergames_final_countdown",0),#
-	     (assign,"$adimi_tool_hungergames_10sec_countdown_for_starting",10),#
-	     (assign,"$adimi_tool_hungergames_10sec_countdown_for_starting_default",10),#
-	     (assign,"$adimi_tool_hungergames_time_until_next_round",60),#60 sec countdown
-	     (assign,"$adimi_tool_hungergames_time_until_next_round_default",60),#60 sec countdown
-		 (assign,"$adimi_tool_hungergames_possible_players",0),
-         ]),
+		(assign,"$adimi_tool_hungergames_game_is_active",0),#
+		(assign,"$adimi_tool_hungergames_final_countdown",0),#
+		(assign,"$adimi_tool_hungergames_10sec_countdown_for_starting",10),#
+		(assign,"$adimi_tool_hungergames_10sec_countdown_for_starting_default",10),#
+		(assign,"$adimi_tool_hungergames_time_until_next_round",60),#60 sec countdown
+		(assign,"$adimi_tool_hungergames_time_until_next_round_default",60),#60 sec countdown
+		(assign,"$adimi_tool_hungergames_possible_players",0),
+	]),
 
-      (ti_on_agent_killed_or_wounded, 0, 0, [(eq,"$adimi_tool_hungergames",1)],
-       [
-        (store_trigger_param_1, ":dead_agent_no"), 
-        (store_trigger_param_2, ":killer_agent_no"),
+	(ti_on_agent_killed_or_wounded, 0, 0, [(eq,"$adimi_tool_hungergames",1)],
+	[
+		(store_trigger_param_1, ":dead_agent_no"), 
+		(store_trigger_param_2, ":killer_agent_no"),
         (call_script, "script_multiplayer_server_on_agent_killed_or_wounded_common", ":dead_agent_no", ":killer_agent_no"),
 		  
 		(try_begin),
-		   (multiplayer_is_server),
-		   (eq,"$adimi_tool_hungergames_game_is_active",1),
-		   (agent_is_active,":dead_agent_no"),
-		   (neg|agent_is_non_player,":dead_agent_no"),
-		   (agent_get_player_id,":dead_agent_playerid",":dead_agent_no"),
-		   (player_is_active,":dead_agent_playerid"),
-		   (try_begin),
-			   (player_slot_eq,":dead_agent_playerid",adimi_tool_player_is_in_hungergame,1),
-			   (player_set_slot,":dead_agent_playerid",adimi_tool_player_is_in_hungergame,0),
+			(multiplayer_is_server),
+			(eq,"$adimi_tool_hungergames_game_is_active",1),
+			(agent_is_active,":dead_agent_no"),
+			(neg|agent_is_non_player,":dead_agent_no"),
+			(agent_get_player_id,":dead_agent_playerid",":dead_agent_no"),
+			(player_is_active,":dead_agent_playerid"),
+			(try_begin),
+				(player_slot_eq,":dead_agent_playerid",adimi_tool_player_is_in_hungergame,1),
+				(player_set_slot,":dead_agent_playerid",adimi_tool_player_is_in_hungergame,0),
 				#pos0 = dead pos ne... pos0 ist absolut unfaehig
-			   (agent_get_position, pos3, ":dead_agent_no"),
-			   (try_for_range,":weapon_slot",ek_item_0,ek_item_3+1),
+				(agent_get_position, pos3, ":dead_agent_no"),
+				(try_for_range,":weapon_slot",ek_item_0,ek_item_3+1),
 					(agent_get_item_slot, ":weapon",":dead_agent_no",":weapon_slot"),
 					(is_between, ":weapon",all_items_begin,all_items_end),
 					(agent_unequip_item, ":dead_agent_no", ":weapon"),
@@ -1107,137 +1081,133 @@ adimi_tool_hungergames_trigger = [
 			   (try_end),
 		   (try_end),
 		(try_end), 
-         ]),
+	]),
 		 
-		 #Map end check
-	  (5, 0, 0, [
-	     (multiplayer_is_server),
-	     (eq,"$adimi_tool_hungergames",1),
-	     (eq,"$adimi_tool_hungergames_game_is_active",1),
-	     (eq,"$adimi_tool_hungergames_reset_map",1),
-		 (assign,"$adimi_tool_hungergames_reset_map",0),
-	  ],
-       [
-	    (try_begin),
-	       (assign,":current_count",0),
-		   (try_for_players, ":pid"), 
-		  # (get_max_players,":max"),
-          # (try_for_range,":pid",0,":max"),
-		     (player_is_active,":pid"),
-			 (player_get_agent_id,":agent",":pid"),
-		     (agent_is_active,":agent"),
-		     (agent_is_alive,":agent"),
-		     (player_slot_eq,":pid",adimi_tool_player_is_in_hungergame,1),
-		     (val_add,":current_count",1),
-			 (str_store_player_username,s10,":pid"),
-			 (assign,":winner_player",":pid"),
-		   (try_end),
-		   (this_or_next|eq,":current_count",0),
-		   (eq,":current_count",1),
-		   (try_begin),
-		     (eq,":current_count",1),
-		     (str_store_string,s62,"str_adimi_tool_hungergames_player_won"),
-		     (call_script,"script_adimi_tool_server_message_alternativ"),
-		   (try_end),
-		   (multiplayer_clear_scene),
-		   (call_script, "script_multiplayer_close_gate_if_it_is_open"),
-           (call_script, "script_adimi_tool_close_new_gates_if_open"),#AdimiTools close gates
-		   (call_script, "script_multiplayer_initialize_belfry_wheel_rotations"),
-           (call_script, "script_multiplayer_move_moveable_objects_initial_positions"),
-		   (call_script, "script_initialize_all_scene_prop_slots"),
-		   (call_script, "script_initialize_objects"),
-		   (try_for_players, ":cur_player_a"), 
-			 (player_is_active, ":cur_player_a"),
-			 (multiplayer_send_int_to_player, ":cur_player_a", multiplayer_event_set_round_start_time, -9999),# this will also initialize moveable object slots.
-		   (try_end),
-		   (try_begin),
-		     (eq,":current_count",1),
-			 (player_is_active,":winner_player"),
-		     (assign, ":armor", "itm_heraldic_mail_with_tunic"),#Armor stats changed! Body 10 legs 5
-             (player_add_spawn_item, ":winner_player", ek_foot, "itm_mail_boots_for_tableau"),
-             (player_add_spawn_item,":winner_player", ek_body, ":armor"),
-             (player_add_spawn_item,":winner_player", ek_head, "itm_items_end"),
-             (player_add_spawn_item,":winner_player", ek_gloves, "itm_leather_gloves"),
-		     (player_add_spawn_item, ":winner_player", ek_item_0, "itm_items_end"),
-             (player_add_spawn_item,":winner_player", ek_item_1, "itm_items_end"),
-             (player_add_spawn_item,":winner_player", ek_item_2, "itm_items_end"),
-             (player_add_spawn_item,":winner_player", ek_item_3, "itm_items_end"),
-		     (player_add_spawn_item, ":winner_player", ek_horse, "itm_items_end"),
-             (player_spawn_new_agent, ":winner_player", 6),
-			 (player_set_slot,":winner_player",adimi_tool_player_is_in_hungergame,0),
-		   (try_end),
-		   (try_for_prop_instances, ":prop_instance_id", "spr_wood_a", somt_object),
-             (scene_prop_set_slot,":prop_instance_id",adimi_tool_hunger_spawn_point,0),	
-           (try_end),
-		   (try_for_prop_instances, ":instance_id", "spr_barrier_8m", somt_object),
-			 (prop_instance_get_variation_id, ":var1", ":instance_id"),
-			 (prop_instance_get_variation_id_2, ":var2",":instance_id"),
-			 (eq,":var1",2),
-			 (gt,":var2",0),
-			 (scene_prop_set_slot,":instance_id",adimi_tool_hunger_trap_triggered,0),
-		   (try_end),
-		   (assign,"$adimi_tool_hungergames_game_is_active",0),#
-		   #added 06-04-2015 03:20
-	       (assign,"$adimi_tool_hungergames_final_countdown",0),#
-	       (assign,"$adimi_tool_hungergames_10sec_countdown_for_starting",10),#
-	       (assign,"$adimi_tool_hungergames_10sec_countdown_for_starting_default",10),#
-	       (assign,"$adimi_tool_hungergames_time_until_next_round",60),#60 sec countdown
-	       (assign,"$adimi_tool_hungergames_time_until_next_round_default",60),#60 sec countdown
-		   #end
-		   #(call_script,"script_adimi_tool_respawn_items_after_round_end_hungergames"), #Moved to the 10th second of the final countdown.. Someone could look for weapons etc.
-		   (call_script,"script_adimi_tool_reset_hungergames_traps"),
-		 (try_end), 
-         ]),
+	#Map end check
+	(5, 0, 0, [
+		(multiplayer_is_server),
+		(eq,"$adimi_tool_hungergames",1),
+		(eq,"$adimi_tool_hungergames_game_is_active",1),
+		(eq,"$adimi_tool_hungergames_reset_map",1),
+		(assign,"$adimi_tool_hungergames_reset_map",0),
+	],
+	[
+		(try_begin),
+			(assign,":current_count",0),
+			(try_for_players, ":pid"), 
+				(player_is_active,":pid"),
+				(player_get_agent_id,":agent",":pid"),
+				(agent_is_active,":agent"),
+				(agent_is_alive,":agent"),
+				(player_slot_eq,":pid",adimi_tool_player_is_in_hungergame,1),
+				(val_add,":current_count",1),
+				(str_store_player_username,s10,":pid"),
+				(assign,":winner_player",":pid"),
+			(try_end),
+			(this_or_next|eq,":current_count",0),
+			(eq,":current_count",1),
+			(try_begin),
+				(eq,":current_count",1),
+				(str_store_string,s62,"str_adimi_tool_hungergames_player_won"),
+				(call_script,"script_adimi_tool_server_message_alternativ"),
+			(try_end),
+			(multiplayer_clear_scene),
+			(call_script, "script_multiplayer_close_gate_if_it_is_open"),
+			(call_script, "script_adimi_tool_close_new_gates_if_open"),#AdimiTools close gates
+			(call_script, "script_multiplayer_initialize_belfry_wheel_rotations"),
+			(call_script, "script_multiplayer_move_moveable_objects_initial_positions"),
+			(call_script, "script_initialize_all_scene_prop_slots"),
+			(call_script, "script_initialize_objects"),
+			(try_for_players, ":cur_player_a"), 
+				(player_is_active, ":cur_player_a"),
+				(multiplayer_send_int_to_player, ":cur_player_a", multiplayer_event_set_round_start_time, -9999),# this will also initialize moveable object slots.
+			(try_end),
+			(try_begin),
+				(eq,":current_count",1),
+				(player_is_active,":winner_player"),
+				(assign, ":armor", "itm_heraldic_mail_with_tunic"),#Armor stats changed! Body 10 legs 5
+				(player_add_spawn_item, ":winner_player", ek_foot, "itm_mail_boots_for_tableau"),
+				(player_add_spawn_item,":winner_player", ek_body, ":armor"),
+				(player_add_spawn_item,":winner_player", ek_head, "itm_items_end"),
+				(player_add_spawn_item,":winner_player", ek_gloves, "itm_leather_gloves"),
+				(player_add_spawn_item, ":winner_player", ek_item_0, "itm_items_end"),
+				(player_add_spawn_item,":winner_player", ek_item_1, "itm_items_end"),
+				(player_add_spawn_item,":winner_player", ek_item_2, "itm_items_end"),
+				(player_add_spawn_item,":winner_player", ek_item_3, "itm_items_end"),
+				(player_add_spawn_item, ":winner_player", ek_horse, "itm_items_end"),
+				(player_spawn_new_agent, ":winner_player", 6),
+				(player_set_slot,":winner_player",adimi_tool_player_is_in_hungergame,0),
+			(try_end),
+			(try_for_prop_instances, ":prop_instance_id", "spr_wood_a", somt_object),
+				(scene_prop_set_slot,":prop_instance_id",adimi_tool_hunger_spawn_point,0),	
+			(try_end),
+			(try_for_prop_instances, ":instance_id", "spr_barrier_8m", somt_object),
+				(prop_instance_get_variation_id, ":var1", ":instance_id"),
+				(prop_instance_get_variation_id_2, ":var2",":instance_id"),
+				(eq,":var1",2),
+				(gt,":var2",0),
+				(scene_prop_set_slot,":instance_id",adimi_tool_hunger_trap_triggered,0),
+			(try_end),
+			(assign,"$adimi_tool_hungergames_game_is_active",0),#
+			#added 06-04-2015 03:20
+			(assign,"$adimi_tool_hungergames_final_countdown",0),#
+			(assign,"$adimi_tool_hungergames_10sec_countdown_for_starting",10),#
+			(assign,"$adimi_tool_hungergames_10sec_countdown_for_starting_default",10),#
+			(assign,"$adimi_tool_hungergames_time_until_next_round",60),#60 sec countdown
+			(assign,"$adimi_tool_hungergames_time_until_next_round_default",60),#60 sec countdown
+			#end
+			#(call_script,"script_adimi_tool_respawn_items_after_round_end_hungergames"), #Moved to the 10th second of the final countdown.. Someone could look for weapons etc.
+			(call_script,"script_adimi_tool_reset_hungergames_traps"),
+		(try_end), 
+	]),
 		 
-		 (1, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1),
-	     (eq,"$adimi_tool_hungergames_game_is_active",0),
-	     (assign,":current_count",0),
-		 (try_for_players, ":playerid"),  
-		 #(get_max_players,":max"),
-		 #(try_for_range,":playerid",0,":max"),
+	(1, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1),
+		(eq,"$adimi_tool_hungergames_game_is_active",0),
+		(assign,":current_count",0),
+		(try_for_players, ":playerid"),  
 			(player_is_active,":playerid"),
 			(player_slot_eq,":playerid",adimi_tool_player_next_hungergame,1),
 		    (player_slot_eq,":playerid",adimi_tool_player_is_in_hungergame,0),
 			(val_add,":current_count",1),
-		 (try_end),
-		 (this_or_next|ge,":current_count",2),#min. is 2 players for a round
-		 (eq,"$gotha_dev_mode",1),#Map creators must also test their maps..
-		 (ge,":current_count",1),
-	  ],
-       [
-		 (try_begin),
+		(try_end),
+		(this_or_next|ge,":current_count",2),#min. is 2 players for a round
+		(eq,"$gotha_dev_mode",1),#Map creators must also test their maps..
+		(ge,":current_count",1),
+	],
+	[
+		(try_begin),
 			(eq,"$adimi_tool_hungergames_time_until_next_round",60),
 		    (assign,reg1,"$adimi_tool_hungergames_time_until_next_round"),
 		    (str_store_string,s1,"str_adimi_tool_hungergames_until_next_round"),
-		    (call_script,"script_adimi_tool_server_message"),
-		 (try_end),
-	     (val_sub,"$adimi_tool_hungergames_time_until_next_round",1),
-		 (try_begin),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",1),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",2),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",3),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",4),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",5),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",10),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",15),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",20),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",25),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",30),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",35),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",40),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",45),
-		   (this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",50),
-		   (eq,"$adimi_tool_hungergames_time_until_next_round",55),
-		   (assign,reg1,"$adimi_tool_hungergames_time_until_next_round"),
-		   (str_store_string,s1,"str_adimi_tool_hungergames_until_next_round"),
-		   (call_script,"script_adimi_tool_server_message"),
-		 (try_end),
-		 (try_begin),
-		   (this_or_next|le,"$adimi_tool_hungergames_time_until_next_round",0),
-		   (eq, "$gotha_dev_mode", 1),
-		   (assign,"$adimi_tool_hungergames_time_until_next_round","$adimi_tool_hungergames_time_until_next_round_default"),#60 sec countdown
-		   (assign,"$adimi_tool_hungergames_game_is_active",1),
-		   (try_for_players,":playerid"),
+			(call_script,"script_adimi_tool_server_message"),
+		(try_end),
+		(val_sub,"$adimi_tool_hungergames_time_until_next_round",1),
+		(try_begin),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",1),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",2),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",3),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",4),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",5),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",10),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",15),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",20),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",25),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",30),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",35),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",40),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",45),
+			(this_or_next|eq,"$adimi_tool_hungergames_time_until_next_round",50),
+			(eq,"$adimi_tool_hungergames_time_until_next_round",55),
+			(assign,reg1,"$adimi_tool_hungergames_time_until_next_round"),
+			(str_store_string,s1,"str_adimi_tool_hungergames_until_next_round"),
+			(call_script,"script_adimi_tool_server_message"),
+		(try_end),
+		(try_begin),
+			(this_or_next|le,"$adimi_tool_hungergames_time_until_next_round",0),
+			(eq, "$gotha_dev_mode", 1),
+			(assign,"$adimi_tool_hungergames_time_until_next_round","$adimi_tool_hungergames_time_until_next_round_default"),#60 sec countdown
+			(assign,"$adimi_tool_hungergames_game_is_active",1),
+			(try_for_players,":playerid"),
 				(player_is_active,":playerid"),
 				(player_slot_eq,":playerid",adimi_tool_player_next_hungergame,1),
 				(player_set_slot,":playerid",adimi_tool_player_next_hungergame,0),
@@ -1277,33 +1247,31 @@ adimi_tool_hungergames_trigger = [
 					#not now! will be reset in adimi_tool_check_respawn_hungergames_start
 					#(player_set_slot,":player_no",adimi_tool_hungergames_spawn_scene_prob_id,-1),		
 				(try_end),
-		   (try_end),
-		   (assign,"$adimi_tool_hungergames_final_countdown",1),#Start final countdown
-		 (try_end),
-         ]),
+			(try_end),
+			(assign,"$adimi_tool_hungergames_final_countdown",1),#Start final countdown
+		(try_end),
+	]),
 	(1, 0, 0, [
-	     (multiplayer_is_server),
-         (eq,"$adimi_tool_hungergames",1),
-         (eq,"$adimi_tool_hungergames_game_is_active",1),
-         (eq,"$adimi_tool_hungergames_final_countdown",1),
-	  ],
-       [
-         (le,"$adimi_tool_hungergames_10sec_countdown_for_starting",10),
-		 (try_begin),
+		(multiplayer_is_server),
+		(eq,"$adimi_tool_hungergames",1),
+		(eq,"$adimi_tool_hungergames_game_is_active",1),
+		(eq,"$adimi_tool_hungergames_final_countdown",1),
+	],
+	[
+		(le,"$adimi_tool_hungergames_10sec_countdown_for_starting",10),
+		(try_begin),
 			(eq,"$adimi_tool_hungergames_10sec_countdown_for_starting",10),
 			(call_script,"script_adimi_tool_respawn_items_after_round_end_hungergames"), #Spawn the items/horses
 			(assign,"$adimi_tool_hungergames_hp_offset_multiplicator",0),
 			(assign,"$adimi_tool_hungergames_hp_offset",0),
-		 (try_end),
-		 (val_sub,"$adimi_tool_hungergames_10sec_countdown_for_starting",1),
-		 (assign,reg1,"$adimi_tool_hungergames_10sec_countdown_for_starting"),
-		 (try_begin),
+		(try_end),
+		(val_sub,"$adimi_tool_hungergames_10sec_countdown_for_starting",1),
+		(assign,reg1,"$adimi_tool_hungergames_10sec_countdown_for_starting"),
+		(try_begin),
 			(gt,"$adimi_tool_hungergames_10sec_countdown_for_starting",0),
 			(str_store_string,s1,"str_adimi_tool_hungergames_final_countdown"),
-		 (else_try),
+		(else_try),
 			(str_store_string,s1,"str_adimi_tool_hungergames_gl_start"),
-			#(get_max_players,":max"),
-		   # (try_for_range,":playerid",0,":max"),
 		    (try_for_players,":playerid"),
 				(player_is_active,":playerid"),
 				(player_slot_eq,":playerid",adimi_tool_player_is_in_hungergame,1),#Player is rdy for next round
@@ -1311,7 +1279,6 @@ adimi_tool_hungergames_trigger = [
 				(agent_is_active,":agent"),
 				(agent_is_alive,":agent"),
 				(agent_set_speed_modifier,":agent", 100),
-				#(try_for_range,":second_playerid",0,":max"),
 				(try_for_players, ":second_playerid"), 
 					(neq,":playerid",":second_playerid"),
 					(player_is_active,":second_playerid"),
@@ -1323,156 +1290,147 @@ adimi_tool_hungergames_trigger = [
 				    (agent_add_relation_with_agent,":agent", ":second_agentid",-1),##ENEMY
 				(try_end),
 			(try_end),
-		 (try_end),
-		 (call_script,"script_adimi_tool_server_message"),
-		 (try_begin),
-		   (le,"$adimi_tool_hungergames_10sec_countdown_for_starting",0),
-		   (assign,"$adimi_tool_hungergames_10sec_countdown_for_starting","$adimi_tool_hungergames_10sec_countdown_for_starting_default"),
-		   (assign,"$adimi_tool_hungergames_final_countdown",0),#
-		 (try_end),
-         ]),
+		(try_end),
+		(call_script,"script_adimi_tool_server_message"),
+		(try_begin),
+			(le,"$adimi_tool_hungergames_10sec_countdown_for_starting",0),
+			(assign,"$adimi_tool_hungergames_10sec_countdown_for_starting","$adimi_tool_hungergames_10sec_countdown_for_starting_default"),
+			(assign,"$adimi_tool_hungergames_final_countdown",0),#
+		(try_end),
+	]),
 
-      (60, 0, 0, [
-	     (multiplayer_is_server),
-         (eq,"$adimi_tool_hungergames",1),
-         (eq,"$adimi_tool_hungergames_game_is_active",1),
-	  ],
-       [
-			(try_begin),
-				(val_add,"$adimi_tool_hungergames_hp_offset",1),
-				(eq,"$adimi_tool_hungergames_hp_offset",5),
-				(val_add,"$adimi_tool_hungergames_hp_offset_multiplicator",1),
-				(assign,"$adimi_tool_hungergames_hp_offset",0),
-			(try_end),
-			(assign,":hp_lose",15),
-			(set_fixed_point_multiplier, 10),
-			(convert_to_fixed_point, "$adimi_tool_hungergames_hp_offset_multiplicator"),
-			(val_mul, ":hp_lose","$adimi_tool_hungergames_hp_offset_multiplicator"),
-			(convert_from_fixed_point, "$adimi_tool_hungergames_hp_offset_multiplicator"),
-			(val_div,":hp_lose",100),
-			#(get_max_players,":max"),
-			#(try_for_range,":playerid",0,":max"),
-			(try_for_players,":playerid"),
-				(player_is_active,":playerid"),
-				(player_slot_eq,":playerid",adimi_tool_player_is_in_hungergame,1),#Player is rdy for next round
-				(player_get_agent_id,":agent",":playerid"),
-				(agent_is_active,":agent"),
-				(agent_is_alive,":agent"),
-				(store_agent_hit_points,":hp",":agent",1),
-				(val_sub,":hp",":hp_lose"),#waere dann so: 1,3,4,6,7
-				(val_max,":hp",0),
-				(agent_set_hit_points,":agent",":hp",1),
-				(le,":hp",0),
-				(agent_deliver_damage_to_agent,":agent",":agent",1), #evil function..
-			(try_end),
-         ]),
+	(60, 0, 0, [
+		(multiplayer_is_server),
+		(eq,"$adimi_tool_hungergames",1),
+		(eq,"$adimi_tool_hungergames_game_is_active",1),
+	],
+	[
+		(try_begin),
+			(val_add,"$adimi_tool_hungergames_hp_offset",1),
+			(eq,"$adimi_tool_hungergames_hp_offset",5),
+			(val_add,"$adimi_tool_hungergames_hp_offset_multiplicator",1),
+			(assign,"$adimi_tool_hungergames_hp_offset",0),
+		(try_end),
+		(assign,":hp_lose",15),
+		(set_fixed_point_multiplier, 10),
+		(convert_to_fixed_point, "$adimi_tool_hungergames_hp_offset_multiplicator"),
+		(val_mul, ":hp_lose","$adimi_tool_hungergames_hp_offset_multiplicator"),
+		(convert_from_fixed_point, "$adimi_tool_hungergames_hp_offset_multiplicator"),
+		(val_div,":hp_lose",100),
+		(try_for_players,":playerid"),
+			(player_is_active,":playerid"),
+			(player_slot_eq,":playerid",adimi_tool_player_is_in_hungergame,1),#Player is rdy for next round
+			(player_get_agent_id,":agent",":playerid"),
+			(agent_is_active,":agent"),
+			(agent_is_alive,":agent"),
+			(store_agent_hit_points,":hp",":agent",1),
+			(val_sub,":hp",":hp_lose"),
+			(val_max,":hp",0),
+			(agent_set_hit_points,":agent",":hp",1),
+			(le,":hp",0),
+			(agent_deliver_damage_to_agent,":agent",":agent",1), #evil function..
+		(try_end),
+	]),
 	  
-      (1, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1)],#RESPAWN STUFF
-       [
-         (multiplayer_is_server),
-      #   (get_max_players, ":num_players"),
-      #   (try_for_range, ":player_no", 0, ":num_players"),
-         (try_for_players,":player_no"),
-           (player_is_active, ":player_no"),
-           (neg|player_is_busy_with_menus, ":player_no"),
+	(1, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1)],#RESPAWN STUFF
+	[
+		(multiplayer_is_server),
+		(try_for_players,":player_no"),
+			(player_is_active, ":player_no"),
+			(neg|player_is_busy_with_menus, ":player_no"),
 
-           (player_get_team_no, ":player_team", ":player_no"), #if player is currently spectator do not spawn his agent
-           (lt, ":player_team", multi_team_spectator),
+			(player_get_team_no, ":player_team", ":player_no"), #if player is currently spectator do not spawn his agent
+			(lt, ":player_team", multi_team_spectator),
 
-           (player_get_troop_id, ":player_troop", ":player_no"), #if troop is not selected do not spawn his agent
-           (ge, ":player_troop", 0),
+			(player_get_troop_id, ":player_troop", ":player_no"), #if troop is not selected do not spawn his agent
+			(ge, ":player_troop", 0),
 
-           (player_get_agent_id, ":player_agent", ":player_no"),
-           (assign, ":spawn_new", 0),
-           (try_begin),
-             (player_get_slot, ":player_first_spawn", ":player_no", slot_player_first_spawn),
-             (eq, ":player_first_spawn", 1),
-             (assign, ":spawn_new", 1),
-             (player_set_slot, ":player_no", slot_player_first_spawn, 0),
-           (else_try),
-             (try_begin),
-               (lt, ":player_agent", 0),
-               (assign, ":spawn_new", 1),
-             (else_try),
-               (neg|agent_is_alive, ":player_agent"),
-               (agent_get_time_elapsed_since_removed, ":elapsed_time", ":player_agent"),
-               (gt, ":elapsed_time", "$g_multiplayer_respawn_period"),
-               (assign, ":spawn_new", 1),
-             (try_end),             
-           (try_end),
-           (eq, ":spawn_new", 1),
-           #SPAWN EQUIP
-		   (player_set_troop_id, ":player_no", "trp_hired_assassin"),
-		   (assign, ":armor", "itm_heraldic_mail_with_tunic"),#Armor stats changed! Body 10 legs 5
-		   (player_add_spawn_item, ":player_no", ek_foot, "itm_mail_boots_for_tableau"),
-           (player_add_spawn_item,":player_no", ek_body, ":armor"),
-           (player_add_spawn_item,":player_no", ek_head, "itm_items_end"),
-           (player_add_spawn_item,":player_no", ek_gloves, "itm_leather_gloves"),
-		   (player_add_spawn_item, ":player_no", ek_item_0, "itm_items_end"),
-           (player_add_spawn_item,":player_no", ek_item_1, "itm_items_end"),
-           (player_add_spawn_item,":player_no", ek_item_2, "itm_items_end"),
-           (player_add_spawn_item,":player_no", ek_item_3, "itm_items_end"),
-		   (player_add_spawn_item, ":player_no", ek_horse, "itm_items_end"),
-           (store_random_in_range, reg0, 1, 6),#Spawn Point 1 - 5
-           (player_spawn_new_agent, ":player_no", reg0),
-         (try_end),
-		  ]),
+			(player_get_agent_id, ":player_agent", ":player_no"),
+			(assign, ":spawn_new", 0),
+			(try_begin),
+				(player_get_slot, ":player_first_spawn", ":player_no", slot_player_first_spawn),
+				(eq, ":player_first_spawn", 1),
+				(assign, ":spawn_new", 1),
+				(player_set_slot, ":player_no", slot_player_first_spawn, 0),
+			(else_try),
+				(try_begin),
+					(lt, ":player_agent", 0),
+					(assign, ":spawn_new", 1),
+				(else_try),
+					(neg|agent_is_alive, ":player_agent"),
+					(agent_get_time_elapsed_since_removed, ":elapsed_time", ":player_agent"),
+					(gt, ":elapsed_time", "$g_multiplayer_respawn_period"),
+					(assign, ":spawn_new", 1),
+				(try_end),             
+			(try_end),
+			(eq, ":spawn_new", 1),
+			#SPAWN EQUIP
+			(player_set_troop_id, ":player_no", "trp_hired_assassin"),
+			(assign, ":armor", "itm_heraldic_mail_with_tunic"),#Armor stats changed! Body 10 legs 5
+			(player_add_spawn_item, ":player_no", ek_foot, "itm_mail_boots_for_tableau"),
+			(player_add_spawn_item,":player_no", ek_body, ":armor"),
+			(player_add_spawn_item,":player_no", ek_head, "itm_items_end"),
+			(player_add_spawn_item,":player_no", ek_gloves, "itm_leather_gloves"),
+			(player_add_spawn_item, ":player_no", ek_item_0, "itm_items_end"),
+			(player_add_spawn_item,":player_no", ek_item_1, "itm_items_end"),
+			(player_add_spawn_item,":player_no", ek_item_2, "itm_items_end"),
+			(player_add_spawn_item,":player_no", ek_item_3, "itm_items_end"),
+			(player_add_spawn_item, ":player_no", ek_horse, "itm_items_end"),
+			(store_random_in_range, reg0, 1, 6),#Spawn Point 1 - 5
+			(player_spawn_new_agent, ":player_no", reg0),
+		(try_end),
+	]),
 		  
 		  
-      (1.5, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1)],
-       [
-         #(scene_prop_get_num_instances, ":num_instances_of_scene_prop", "spr_barrier_8m"),     
-		 (try_for_agents,":agent"),
-		   (agent_is_active,":agent"),
-		   (agent_is_alive,":agent"),
-		   (assign,":shoot",0),
-		  # (try_for_range, ":cur_instance", 0, ":num_instances_of_scene_prop"),
-		   (try_for_prop_instances, ":instance_id", "spr_barrier_8m", somt_object),
-			# (scene_prop_get_instance, ":instance_id", "spr_barrier_8m", ":cur_instance"),
-			 (prop_instance_get_variation_id, ":var1", ":instance_id"),
-			 (eq,":var1",2),
-			 (prop_instance_get_variation_id_2, ":var2",":instance_id"),
-			 (gt,":var2",0),
-			 (scene_prop_slot_eq,":instance_id",adimi_tool_hunger_trap_triggered,0),
-			 (scene_prop_has_agent_on_it, ":instance_id", ":agent"),
-			 (scene_prop_set_slot,":instance_id",adimi_tool_hunger_trap_triggered,1),
-			 (assign,":shoot",1),
-		   (try_end),
-		   (eq,":shoot",1),
-		   (agent_is_alive,":agent"),
-		   (position_set_x,pos2,-100000),
-		   (position_set_y,pos2,-100000),
-		   (position_set_z,pos2,-100000),
-		   (set_spawn_position,pos2),
-		   (spawn_agent,"trp_bonus_chest_1"),
-		   (assign,":shooter_agent",reg0),
-		   (agent_is_active,":shooter_agent"),
-		   (agent_is_alive,":shooter_agent"),
-		   (agent_set_ranged_damage_modifier,":shooter_agent",250), # value is in percentage, 100 is default
-		   (try_for_agents,":agents"),
-		      (agent_is_active,":agents"),
-			  (agent_is_alive,":agents"),
-			  (neq,":agents",":shooter_agent"),
-			  (agent_add_relation_with_agent, ":agents", ":shooter_agent",-1),
-			  (agent_add_relation_with_agent, ":shooter_agent", ":agents",-1),
-		   (try_end),
-		   #(scene_prop_get_num_instances, ":num_instances_of_scene_prop", "spr_barrier_cone"),
-		   #(try_for_range, ":cur_prop_instance", 0, ":num_instances_of_scene_prop"),
+	(1.5, 0, 0, [(multiplayer_is_server),(eq,"$adimi_tool_hungergames",1)],
+	[
+		(try_for_agents,":agent"),
+			(agent_is_active,":agent"),
+			(agent_is_alive,":agent"),
+			(assign,":shoot",0),
+			(try_for_prop_instances, ":instance_id", "spr_barrier_8m", somt_object),
+				(eq,":shoot",0), #Added check to improve performance
+				(prop_instance_get_variation_id, ":var1", ":instance_id"),
+				(eq,":var1",2),
+				(prop_instance_get_variation_id_2, ":var2",":instance_id"),
+				(gt,":var2",0),
+				(scene_prop_slot_eq,":instance_id",adimi_tool_hunger_trap_triggered,0),
+				(scene_prop_has_agent_on_it, ":instance_id", ":agent"),
+				(scene_prop_set_slot,":instance_id",adimi_tool_hunger_trap_triggered,1),
+				(assign,":shoot",1),
+			(try_end),
+			(eq,":shoot",1),
+			(agent_is_alive,":agent"),
+			(position_set_x,pos2,-100000),
+			(position_set_y,pos2,-100000),
+			(position_set_z,pos2,-100000),
+			(set_spawn_position,pos2),
+			(spawn_agent,"trp_bonus_chest_1"), #Spawn a hostile "agent" which "shoots" arrows/javelins etc. as damage dealer from traps
+			(assign,":shooter_agent",reg0),
+			(agent_is_active,":shooter_agent"),
+			(agent_is_alive,":shooter_agent"),
+			(agent_set_ranged_damage_modifier,":shooter_agent",250), # value is in percentage, 100 is default
+			#no need to improve performance. This will only happen if anyone actually triggers a trap
+			(try_for_agents,":agents"),
+				(agent_is_active,":agents"),
+				(agent_is_alive,":agents"),
+				(neq,":agents",":shooter_agent"),
+				(agent_add_relation_with_agent, ":agents", ":shooter_agent",-1),
+				(agent_add_relation_with_agent, ":shooter_agent", ":agents",-1),
+			(try_end),
 		    (try_for_prop_instances, ":prop_instance_id", "spr_barrier_cone", somt_object),
-			 #(scene_prop_get_instance, ":prop_instance_id", "spr_barrier_cone", ":cur_prop_instance"),
-			 (prop_instance_get_variation_id, ":vararrow",":prop_instance_id"),
-			 (eq,":vararrow",":var2"), 
-			 (prop_instance_get_variation_id_2, ":missile_speed",":prop_instance_id"),
-			 (val_mul,":missile_speed",1000),#10*1000 = 10000 = good
-			 (prop_instance_get_position, pos1, ":prop_instance_id"), 
-			 (add_missile,":shooter_agent", pos1, ":missile_speed", "itm_war_bow", imod_deadly,"itm_bodkin_arrows", imod_deadly),
-		   (try_end),
-		   (agent_fade_out,":shooter_agent"),
-		 (try_end),
-		  ]),
-	]			
+				(prop_instance_get_variation_id, ":vararrow",":prop_instance_id"),
+				(eq,":vararrow",":var2"), 
+				(prop_instance_get_variation_id_2, ":missile_speed",":prop_instance_id"),
+				(val_mul,":missile_speed",1000),#10*1000 = 10000 = good
+				(prop_instance_get_position, pos1, ":prop_instance_id"), 
+				(add_missile,":shooter_agent", pos1, ":missile_speed", "itm_war_bow", imod_deadly,"itm_bodkin_arrows", imod_deadly),
+			(try_end),
+			(agent_fade_out,":shooter_agent"), #Fade out the temporary spawned damage dealer
+		(try_end),
+	]),
+]			
 		
-#Little changes 11-02
 adimi_tool_all_gamemodes = [adimi_tool_reopen_presentations,adimi_tool_player_stats_key,adimi_tool_server_message, adimi_tool_immortal_loop,adimi_tool_mute_loop,adimi_tool_get_admins_with_admin_level, adimi_tool_reset_admins_with_admin_level, adimi_tool_crash_server_trigger, adimi_tool_spawn_agent_trigger,adimi_tool_pickup_food, adimi_tool_rainfall_snow_trigger, adimi_tool_rainfall_rain_trigger,adimi_tool_replace_scene_items_after, adimi_tool_drowning,adimi_tool_welcome_message, adimi_tool_exit_trigger, adimi_tool_wall_of_death, adimi_tool_teleport_key_pressed, adimi_tool_teleport_start, adimi_tool_class_limit,adimi_tool_dev_mode, adimi_tool_admin_chats,adimi_tool_teamhit_log]
 adimi_tool_all_gamemodes += adimi_tool_fade_out_stay_horses
 adimi_tool_deathmatch_triggers = [adimi_tool_reopen_presentations,adimi_tool_player_stats_key,adimi_tool_server_message, adimi_tool_immortal_loop,adimi_tool_mute_loop,adimi_tool_get_admins_with_admin_level, adimi_tool_reset_admins_with_admin_level, adimi_tool_crash_server_trigger, adimi_tool_spawn_agent_trigger,adimi_tool_pickup_food, adimi_tool_rainfall_snow_trigger, adimi_tool_rainfall_rain_trigger,adimi_tool_replace_scene_items_after, adimi_tool_drowning,adimi_tool_welcome_message, adimi_tool_exit_trigger, adimi_tool_wall_of_death, adimi_tool_teleport_key_pressed, adimi_tool_teleport_start, adimi_tool_class_limit,adimi_tool_dev_mode, adimi_tool_admin_chats,adimi_tool_teamhit_log]
@@ -1481,7 +1439,7 @@ adimi_tool_duel_mode_triggers = [adimi_tool_reopen_presentations,adimi_tool_play
 adimi_tool_duel_mode_triggers += adimi_tool_fade_out_stay_horses
 adimi_tool_anti_teamkill_triggers = [adimi_tool_anti_tk_triggers]
 adimi_tool_all_gamemodes += adimi_tool_anti_teamkill_triggers #Otherwise the TK Counter is set wrong 12-01-2015
-adimi_tool_deathmatch_triggers += adimi_tool_hungergames_trigger #Fugt den Hungergames fur dm hinzu
+adimi_tool_deathmatch_triggers += adimi_tool_hungergames_trigger #Implements hungergames to the deathmatch gamemode
 
 
 multiplayer_server_check_belfry_movement = (
