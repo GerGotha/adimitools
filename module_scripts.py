@@ -55323,7 +55323,7 @@ scripts = [
         (multiplayer_send_2_int_to_player, ":player_no", multiplayer_event_use_item, ":instance_id", ":agent_id"),
       (try_end),	
     (else_try),	  
-      ##just 4 ADMINS
+      #admins only
 	  (eq, ":var", 1),#var no.1 = 1
 	  (this_or_next|player_slot_eq,":player",adimi_tool_admin_level_low,1),
 	  (this_or_next|player_slot_eq,":player",adimi_tool_admin_level_mid,1),
@@ -55618,7 +55618,7 @@ scripts = [
 	]),
 	
 	("cf_adimi_tool_rotate_windmil_fan",
-    [#Gotha Rotierendes Windmuehlen Rad
+    [#Gotha rotating windmil fan
 	  (multiplayer_is_server),
       (store_script_param_1, ":instance_id"),
       (prop_instance_get_position, pos8, ":instance_id"),
